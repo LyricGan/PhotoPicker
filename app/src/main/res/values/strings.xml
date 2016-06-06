@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">PhotoPicker</string>
     <string name="action_settings">Settings</string>
+
+    <string name="template_done" formatted ="false">done(%d/9)</string>
 </resources>

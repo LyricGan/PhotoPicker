@@ -1,11 +1,10 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.photopicker.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -23,8 +22,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile rootProject.ext.dependencies.jUnit
     compile rootProject.ext.dependencies.appCompat
-    compile rootProject.ext.dependencies.design
     compile rootProject.ext.dependencies.fresco
     compile 'com.heaven7.core.adapter:adapter:1.0'
-    compile project(':library')
 }

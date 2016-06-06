@@ -21,3 +21,44 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    compileSdkVersion = 23
+    buildToolsVersion = '23.0.2'
+    minSdkVersion = 15
+    targetSdkVersion = 23
+
+    supportLibraryVersion = '23.2.0'
+    retrofitVersion = '2.0.0-beta2'
+
+    dependencies = [
+            appCompat: "com.android.support:appcompat-v7:$supportLibraryVersion",
+            cardView: "com.android.support:cardview-v7:$supportLibraryVersion",
+            recyclerView: "com.android.support:recyclerview-v7:$supportLibraryVersion",
+            supportv4: "com.android.support:support-v4:$supportLibraryVersion",
+            design: "com.android.support:design:$supportLibraryVersion",
+            jUnit: 'junit:junit:4.12',
+            gson: 'com.google.code.gson:gson:2.4',
+            realm: 'io.realm:realm-android:0.87.2',
+            picasso: 'com.squareup.picasso:picasso:2.5.2',
+            glide: 'com.github.bumptech.glide:glide:3.6.1',
+            fresco: 'com.facebook.fresco:fresco:0.9.0',
+            rxAndroid: 'io.reactivex:rxandroid:1.0.1',
+            rxJava: 'io.reactivex:rxjava:1.1.0',
+            nineoldandroids: 'com.nineoldandroids:library:2.4.0',
+            eventbus: 'de.greenrobot:eventbus:2.4.0',
+            swipelayout: 'com.daimajia.swipelayout:library:1.2.0',
+            guava: 'com.google.guava:guava:19.0',
+            androidcommon: 'cn.trinea.android.common:trinea-android-common:4.2.15',
+            xutils: 'org.xutils:xutils:3.3.22',
+            ion: 'com.koushikdutta.ion:ion:2.1.7',
+            leakcanarydebug: 'com.squareup.leakcanary:leakcanary-android:1.3.1',
+            leakcanaryrelease: 'com.squareup.leakcanary:leakcanary-android-no-op:1.3.1',
+            quickutils: 'com.cesarferreira.quickutils:library:2.+',
+            retrofit: "com.squareup.retrofit:retrofit:$retrofitVersion",
+            retrofitConverterGson: "com.squareup.retrofit:converter-gson:$retrofitVersion",
+            retrofitAdapterRxJava: "com.squareup.retrofit:adapter-rxjava:$retrofitVersion",
+            disklrucache: 'com.jakewharton:disklrucache:2.0.2',
+            okhttp: 'com.squareup.okhttp3:okhttp:3.3.1'
+    ]
+}
