@@ -42,7 +42,7 @@ public final class PhotoPickerHelper {
     public final static int REQUEST_CODE_SEE_BIG_PIC = 102;
 
     /**
-     * the index of all photo in the {@link PhotoLoadResultCallback#onResultCallback(List<PhotoDirectory>)}
+     * the index of all photo in the {@link PhotoLoadResultCallback#onResultCallback(List< PhotoDirectoryEntity >)}
      */
     public static final int INDEX_ALL_PHOTOS = 0;
     /**
@@ -74,7 +74,7 @@ public final class PhotoPickerHelper {
          * @param directories the all photo dirs , every dir contains some photoes/images.
          *                    and the index = 0 of list is the whole dir contains all photoes.
          */
-        void onResultCallback(List<PhotoDirectory<T>> directories);
+        void onResultCallback(List<PhotoDirectoryEntity<T>> directories);
     }
 
     /*public*/ PhotoPickerHelper(Activity context) {
@@ -154,15 +154,15 @@ public final class PhotoPickerHelper {
          * @param allPhotoesDir the directiry of the all photo's
          * @return true if you set up it.otherwise return false.
          */
-        protected boolean setUpAllPhotoedDirectory(PhotoDirectory<T> allPhotoesDir) {
+        protected boolean setUpAllPhotoedDirectory(PhotoDirectoryEntity<T> allPhotoesDir) {
             return false;
         }
 
         protected void doOnLoadFinished(Cursor data) {
             if (data == null) return;
-            List<PhotoDirectory<T>> dirs = new ArrayList<>();
+            List<PhotoDirectoryEntity<T>> dirs = new ArrayList<>();
             //all photo with directory
-            PhotoDirectory<T> allPhotoesDir = new PhotoDirectory<>();
+            PhotoDirectoryEntity<T> allPhotoesDir = new PhotoDirectoryEntity<>();
             if (!setUpAllPhotoedDirectory(allPhotoesDir)) {
                 allPhotoesDir.setName(getContext().getString(R.string.all_image));
                 allPhotoesDir.setId("ALL");
@@ -173,7 +173,7 @@ public final class PhotoPickerHelper {
             String name;
             String path;
 
-            PhotoDirectory<T> dir;
+            PhotoDirectoryEntity<T> dir;
             int index;  //index of dir
             while (data.moveToNext()) {
 
@@ -182,7 +182,7 @@ public final class PhotoPickerHelper {
                 name = data.getString(data.getColumnIndexOrThrow(BUCKET_DISPLAY_NAME));
                 path = data.getString(data.getColumnIndexOrThrow(DATA));
 
-                dir = new PhotoDirectory<>();
+                dir = new PhotoDirectoryEntity<>();
                 dir.setId(bucketId);
                 dir.setName(name);
 

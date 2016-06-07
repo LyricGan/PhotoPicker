@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".ui.PhotoPickerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +25,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.PhotoPagerActivity"/>
-        <activity android:name=".ui.PhotoPickerTestActivity"/>
     </application>
 
 </manifest>

@@ -16,6 +16,7 @@ import com.heaven7.adapter.ISelectable;
 import com.heaven7.adapter.QuickRecycleViewAdapter;
 import com.heaven7.core.util.ViewHelper;
 import com.photopicker.library.R;
+import com.photopicker.library.view.PhotoView;
 
 import java.util.List;
 
@@ -114,14 +115,13 @@ public abstract class PhotoGridAdapter<T extends IPhotoFileEntity> extends Quick
     }
 
     @Override
-    protected void onBindData(Context context, final int position, final T item,
-                              int itemLayoutId, final ViewHelper helper) {
+    protected void onBindData(Context context, final int position, final T item, int itemLayoutId, final ViewHelper helper) {
         if (itemLayoutId == 0) {
             if (bindCameraItemSuccess(context, position, helper)) {
                 return;
             }
-            final ImageView view = helper.getView(R.id.photo_picker_iv_image);
-            view.setScaleType(ImageView.ScaleType.CENTER);
+            final PhotoView view = helper.getView(R.id.photo_picker_iv_image);
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             view.setImageURI(new Uri.Builder()
                     .scheme("res")
                     .path(String.valueOf(R.drawable.ic_camera_album))
@@ -132,12 +132,12 @@ public abstract class PhotoGridAdapter<T extends IPhotoFileEntity> extends Quick
                         @Override
                         public void onClick(View v) {
                             if (mCallback != null) {
-                                mCallback.onClickCamera(v);
+                                mCallback.onClickItemView(v, position, item);
                             }
                         }
                     });
         } else {
-            final ImageView view = helper.getView(R.id.photo_picker_iv_image);
+            final PhotoView view = helper.getView(R.id.photo_picker_iv_image);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             ImageView iv = helper.getView(R.id.photo_picker_iv_select_icon);
             //apply select state
@@ -151,11 +151,9 @@ public abstract class PhotoGridAdapter<T extends IPhotoFileEntity> extends Quick
                             if (mCallback == null || item.isSelected()) {
                                 getSelectHelper().toogleSelected(position);
                             } else {
-                                if (!mCallback.shouldIgnoreClickEventOfSelectIcon(
-                                        position, item, getSelectHelper().getSelectedItems())) {
+                                if (!mCallback.shouldIgnoreClickEventOfSelectIcon(position, item, getSelectHelper().getSelectedItems())) {
                                     getSelectHelper().toogleSelected(position);
-                                    mCallback.onClickSelectIcon(helper.getRootView(), position,
-                                            item, getSelectHelper().getSelectedItems());
+                                    mCallback.onClickSelectIcon(helper.getRootView(), position, item, getSelectHelper().getSelectedItems());
                                 }
                             }
                         }

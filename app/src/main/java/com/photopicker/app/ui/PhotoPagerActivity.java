@@ -9,40 +9,41 @@ import android.widget.ImageView;
 
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.photopicker.app.R;
-import com.photopicker.library.drawee.PhotoDraweeView;
-import com.photopicker.library.picker.BasePhotoFileEntity;
+import com.photopicker.library.picker.PhotoFileEntity;
+import com.photopicker.library.view.PhotoView;
 import com.photopicker.library.picker.PhotoPagerAdapter;
 import com.photopicker.library.picker.PhotoPickerHelper;
 
 import java.util.ArrayList;
 
 public class PhotoPagerActivity extends Activity {
-    ViewPager vp_photos;
-    ImageView iv_selected;
+    private ViewPager vp_photos;
+    private ImageView iv_selected;
 
-    private ArrayList<BasePhotoFileEntity> mPhotos;
-    private ArrayList<BasePhotoFileEntity> mSelectPhotoes;
+    private ArrayList<PhotoFileEntity> mPhotos;
+    private ArrayList<PhotoFileEntity> mSelectPhotoes;
     private int mSelectIndex ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ac_photo_picker_pager);
+        setContentView(R.layout.activity_photo_picker_pager);
         vp_photos = (ViewPager) findViewById(R.id.vp_photos);
         iv_selected = (ImageView) findViewById(R.id.iv_selected);
-        initData(savedInstanceState);
+
+        initialize();
     }
 
-    protected void initData(Bundle savedInstanceState) {
+    protected void initialize() {
         mPhotos = getIntent().getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOES);
         mSelectPhotoes = getIntent().getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOES_SELECTED);
         mSelectIndex = getIntent().getIntExtra(PhotoPickerHelper.KEY_SELECT_INDEX, 0);
 
-        vp_photos.setAdapter(new PhotoPagerAdapter<BasePhotoFileEntity>(mPhotos) {
+        vp_photos.setAdapter(new PhotoPagerAdapter<PhotoFileEntity>(mPhotos) {
             @Override
-            protected View onInstantiateItem(ViewGroup container, int position, BasePhotoFileEntity item) {
-                PhotoDraweeView view = new PhotoDraweeView(container.getContext());
-                view.loadImage(item.getPath(), null, R.mipmap.ic_launcher, R.mipmap.ic_broken_image_black, ScalingUtils.ScaleType.CENTER);
+            protected View onInstantiateItem(ViewGroup container, int position, PhotoFileEntity item) {
+                PhotoView view = new PhotoView(container.getContext());
+                view.loadImage(item.getPath(), null, R.mipmap.ic_launcher, R.mipmap.ic_broken_image_black, ScalingUtils.ScaleType.FIT_XY);
                 container.addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 return view;
             }

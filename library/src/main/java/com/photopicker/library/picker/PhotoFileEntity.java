@@ -7,13 +7,12 @@ import android.os.Parcelable;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class BasePhotoFileEntity implements IPhotoFileEntity, Parcelable, Serializable {
-
+public class PhotoFileEntity implements IPhotoFileEntity, Parcelable, Serializable {
     private int imageId;
     private String path;
     private boolean selected;
 
-    public BasePhotoFileEntity(int imageId, String path) {
+    public PhotoFileEntity(int imageId, String path) {
         this.imageId = imageId;
         this.path = path;
     }
@@ -52,7 +51,7 @@ public class BasePhotoFileEntity implements IPhotoFileEntity, Parcelable, Serial
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BasePhotoFileEntity entity = (BasePhotoFileEntity) o;
+        PhotoFileEntity entity = (PhotoFileEntity) o;
         if (imageId == entity.imageId && path.equals(entity.path)) {
             return true;
         }
@@ -78,26 +77,26 @@ public class BasePhotoFileEntity implements IPhotoFileEntity, Parcelable, Serial
 
     @Override
     public String toString() {
-        return "BasePhotoFileEntity{" +
+        return "PhotoFileEntity{" +
                 "imageId=" + imageId +
                 ", path='" + path + '\'' +
                 ", selected=" + selected +
                 '}';
     }
 
-    private BasePhotoFileEntity(Parcel in) {
+    private PhotoFileEntity(Parcel in) {
         this.imageId = in.readInt();
         this.path = in.readString();
         this.selected = in.readByte() != 0;
     }
 
-    public static final Creator<BasePhotoFileEntity> CREATOR = new Creator<BasePhotoFileEntity>() {
-        public BasePhotoFileEntity createFromParcel(Parcel source) {
-            return new BasePhotoFileEntity(source);
+    public static final Creator<PhotoFileEntity> CREATOR = new Creator<PhotoFileEntity>() {
+        public PhotoFileEntity createFromParcel(Parcel source) {
+            return new PhotoFileEntity(source);
         }
 
-        public BasePhotoFileEntity[] newArray(int size) {
-            return new BasePhotoFileEntity[size];
+        public PhotoFileEntity[] newArray(int size) {
+            return new PhotoFileEntity[size];
         }
     };
 }

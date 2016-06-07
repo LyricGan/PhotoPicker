@@ -13,8 +13,8 @@ class ImageCaptureManager {
     private final Context mContext;
     String mCurrentPhotoPath;
 
-    public ImageCaptureManager(Context mContext) {
-        this.mContext = mContext;
+    public ImageCaptureManager(Context context) {
+        this.mContext = context;
     }
 
     public Context getContext() {

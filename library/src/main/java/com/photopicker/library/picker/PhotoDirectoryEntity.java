@@ -3,7 +3,7 @@ package com.photopicker.library.picker;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoDirectory<T extends IPhotoFileEntity> {
+public class PhotoDirectoryEntity<T extends IPhotoFileEntity> {
     private String id;
     private String name;
     private String path;
@@ -13,8 +13,8 @@ public class PhotoDirectory<T extends IPhotoFileEntity> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PhotoDirectory)) return false;
-        PhotoDirectory that = (PhotoDirectory) o;
+        if (!(o instanceof PhotoDirectoryEntity)) return false;
+        PhotoDirectoryEntity that = (PhotoDirectoryEntity) o;
 
         if (id == null || !id.equals(that.id)) {
             return false;

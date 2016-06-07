@@ -1,21 +1,21 @@
-package com.photopicker.library.drawee;
+package com.photopicker.library.view;
 
 import android.graphics.RectF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.DraweeView;
 
 public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapListener {
-
     private Attacher mAttacher;
 
     public DefaultOnDoubleTapListener(Attacher attacher) {
         setPhotoDraweeViewAttacher(attacher);
     }
 
-    @Override public boolean onSingleTapConfirmed(MotionEvent e) {
-
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
         if (mAttacher == null) {
             return false;
         }
@@ -23,10 +23,8 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
         if (draweeView == null) {
             return false;
         }
-
         if (mAttacher.getOnPhotoTapListener() != null) {
             final RectF displayRect = mAttacher.getDisplayRect();
-
             if (null != displayRect) {
                 final float x = e.getX(), y = e.getY();
                 if (displayRect.contains(x, y)) {
@@ -42,11 +40,11 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
             mAttacher.getOnViewTapListener().onViewTap(draweeView, e.getX(), e.getY());
             return true;
         }
-
         return false;
     }
 
-    @Override public boolean onDoubleTap(MotionEvent event) {
+    @Override
+    public boolean onDoubleTap(MotionEvent event) {
         if (mAttacher == null) {
             return false;
         }
@@ -69,7 +67,8 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
         return true;
     }
 
-    @Override public boolean onDoubleTapEvent(MotionEvent event) {
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent event) {
         return false;
     }
 

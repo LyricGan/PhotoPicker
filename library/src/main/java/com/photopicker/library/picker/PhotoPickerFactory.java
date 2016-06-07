@@ -8,11 +8,11 @@ public final class PhotoPickerFactory {
     private static IPhotoFileEntityFactory sPhotoFactory;
     private static ViewHelper.IImageLoader sImageLoader;
 
-    private static final IPhotoFileEntityFactory<BasePhotoFileEntity> sDefaultFacory
-            = new IPhotoFileEntityFactory<BasePhotoFileEntity>() {
+    private static final IPhotoFileEntityFactory<PhotoFileEntity> sDefaultFacory
+            = new IPhotoFileEntityFactory<PhotoFileEntity>() {
         @Override
-        public BasePhotoFileEntity create(int id, String path) {
-            return new BasePhotoFileEntity(id, path);
+        public PhotoFileEntity create(int id, String path) {
+            return new PhotoFileEntity(id, path);
         }
     };
 

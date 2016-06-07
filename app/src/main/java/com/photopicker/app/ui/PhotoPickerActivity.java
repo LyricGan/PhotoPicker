@@ -19,8 +19,8 @@ import android.widget.TextView;
 import com.heaven7.adapter.ISelectable;
 import com.heaven7.core.util.ViewHelper;
 import com.photopicker.app.R;
-import com.photopicker.library.picker.BasePhotoFileEntity;
-import com.photopicker.library.picker.PhotoDirectory;
+import com.photopicker.library.picker.PhotoFileEntity;
+import com.photopicker.library.picker.PhotoDirectoryEntity;
 import com.photopicker.library.picker.PhotoGridAdapter;
 import com.photopicker.library.picker.PhotoPickerFactory;
 import com.photopicker.library.picker.PhotoPickerHelper;
@@ -29,30 +29,34 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoPickerTestActivity extends Activity implements PhotoPickerHelper.PhotoLoadResultCallback<BasePhotoFileEntity> {
-    TextView tv_all_image;
-    TextView tv_done_notice;
-    ImageView iv_Back;
-    RecyclerView rv_photos;
+public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.PhotoLoadResultCallback<PhotoFileEntity> {
+    private TextView tv_done_notice;
+    private RecyclerView rv_photos;
 
     private PhotoPickerHelper mPickerHelper;
-    private List<PhotoDirectory<BasePhotoFileEntity>> mPhotoDirs;
+    private List<PhotoDirectoryEntity<PhotoFileEntity>> mPhotoDirs;
 
-    private PhotoGridAdapter<BasePhotoFileEntity> mGridAdapter;
+    private PhotoGridAdapter<PhotoFileEntity> mGridAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.ac_photo_picker);
-        tv_all_image = (TextView) findViewById(R.id.tv_all_image);
+        setContentView(R.layout.activity_photo_picker);
+        final ImageView iv_back = (ImageView) findViewById(R.id.iv_back);
+        final TextView tv_all_image = (TextView) findViewById(R.id.tv_all_image);
         tv_done_notice = (TextView) findViewById(R.id.tv_done_notice);
-        iv_Back = (ImageView) findViewById(R.id.iv_back);
         rv_photos = (RecyclerView) findViewById(R.id.rv_photos);
 
-        iv_Back.setOnClickListener(new View.OnClickListener() {
+        iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        tv_all_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
@@ -61,10 +65,10 @@ public class PhotoPickerTestActivity extends Activity implements PhotoPickerHelp
 
         PhotoPickerFactory.setImageLoader(new DraweeImageLoader(0));
         //this also is the default factory
-        PhotoPickerFactory.setPhotoFileEntityFactory(new PhotoPickerFactory.IPhotoFileEntityFactory<BasePhotoFileEntity>() {
+        PhotoPickerFactory.setPhotoFileEntityFactory(new PhotoPickerFactory.IPhotoFileEntityFactory<PhotoFileEntity>() {
             @Override
-            public BasePhotoFileEntity create(int id, String path) {
-                return new BasePhotoFileEntity(id, path);
+            public PhotoFileEntity create(int id, String path) {
+                return new PhotoFileEntity(id, path);
             }
         });
         mPickerHelper = PhotoPickerFactory.createPhotoPickerHelper(this);
@@ -72,15 +76,14 @@ public class PhotoPickerTestActivity extends Activity implements PhotoPickerHelp
         if (savedInstanceState != null) {
             mPickerHelper.setPhotoPath(savedInstanceState.getString("image", null));
         }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
-                PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
         } else {
             mPickerHelper.scanPhotoes(this);
         }
     }
 
-    private final PhotoGridAdapter.ICallback<BasePhotoFileEntity> mCallback = new PhotoGridAdapter.ICallback<BasePhotoFileEntity>() {
+    private final PhotoGridAdapter.ICallback<PhotoFileEntity> mCallback = new PhotoGridAdapter.ICallback<PhotoFileEntity>() {
         @Override
         public void onClickCamera(View itemView) {
             try {
@@ -91,32 +94,32 @@ public class PhotoPickerTestActivity extends Activity implements PhotoPickerHelp
         }
 
         @Override
-        public void onClickItemView(View itemView, int position, BasePhotoFileEntity item) {
-            List<BasePhotoFileEntity> selectItems = mGridAdapter.getSelectHelper().getSelectedItems();
-            ArrayList<BasePhotoFileEntity> photoes = new ArrayList<>(mGridAdapter.getAdapterManager().getItems());
+        public void onClickItemView(View itemView, int position, PhotoFileEntity item) {
+            List<PhotoFileEntity> selectItems = mGridAdapter.getSelectHelper().getSelectedItems();
+            ArrayList<PhotoFileEntity> photoes = new ArrayList<>(mGridAdapter.getAdapterManager().getItems());
             if (mGridAdapter.isShowCamera()) {
                 photoes.remove(0);
                 position -= 1;
             }
-            Bundle b = new Bundle();
-            b.putInt(PhotoPickerHelper.KEY_SELECT_INDEX, position);
-            b.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES, photoes);
+            Bundle bundle = new Bundle();
+            bundle.putInt(PhotoPickerHelper.KEY_SELECT_INDEX, position);
+            bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES, photoes);
             if (selectItems != null) {
-                b.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES_SELECTED, new ArrayList<>(mGridAdapter.getSelectHelper().getSelectedItems()));
+                bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES_SELECTED, new ArrayList<>(mGridAdapter.getSelectHelper().getSelectedItems()));
             }
-            Intent intent = new Intent(PhotoPickerTestActivity.this, PhotoPagerActivity.class);
-            intent.putExtras(b);
+            Intent intent = new Intent(PhotoPickerActivity.this, PhotoPagerActivity.class);
+            intent.putExtras(bundle);
             startActivityForResult(intent, PhotoPickerHelper.REQUEST_CODE_SEE_BIG_PIC);
         }
 
         @Override
-        public void onClickSelectIcon(View itemView, int position, BasePhotoFileEntity item, List<BasePhotoFileEntity> selectItems) {
+        public void onClickSelectIcon(View itemView, int position, PhotoFileEntity item, List<PhotoFileEntity> selectItems) {
             int size = selectItems != null ? selectItems.size() : 0;
             tv_done_notice.setText(getString(R.string.template_done, size));
         }
 
         @Override
-        public boolean shouldIgnoreClickEventOfSelectIcon(int position, BasePhotoFileEntity item, List<BasePhotoFileEntity> selectItems) {
+        public boolean shouldIgnoreClickEventOfSelectIcon(int position, PhotoFileEntity item, List<PhotoFileEntity> selectItems) {
             if (selectItems != null && selectItems.size() == 9) {
                 return true;
             }
@@ -130,7 +133,7 @@ public class PhotoPickerTestActivity extends Activity implements PhotoPickerHelp
         super.onSaveInstanceState(outState);
     }
 
-    @Override //有时候直接走oncreate.有时候走 onRestoreInstanceState
+    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mPickerHelper.setPhotoPath(savedInstanceState.getString("image", null));
@@ -153,10 +156,10 @@ public class PhotoPickerTestActivity extends Activity implements PhotoPickerHelp
                     return;
                 }
                 String path = mPickerHelper.getCurrentPhotoPath();
-                BasePhotoFileEntity entity = (BasePhotoFileEntity) PhotoPickerFactory.getPhotoFileEntityFactory()
+                PhotoFileEntity entity = (PhotoFileEntity) PhotoPickerFactory.getPhotoFileEntityFactory()
                         .create(path.hashCode(), path);
                 //add to dir
-                final PhotoDirectory<BasePhotoFileEntity> dirs = mPhotoDirs.get(PhotoPickerHelper.INDEX_ALL_PHOTOS);
+                final PhotoDirectoryEntity<PhotoFileEntity> dirs = mPhotoDirs.get(PhotoPickerHelper.INDEX_ALL_PHOTOS);
                 dirs.getPhotos().add(0, entity);
                 dirs.setPath(path);
                 //notify adapter
@@ -169,23 +172,21 @@ public class PhotoPickerTestActivity extends Activity implements PhotoPickerHelp
 
     private void finishSelect() {
         Intent sIntent = new Intent();
-        List<BasePhotoFileEntity> selectedPhotos = mGridAdapter.getSelectHelper().getSelectedItems();
+        List<PhotoFileEntity> selectedPhotos = mGridAdapter.getSelectHelper().getSelectedItems();
         sIntent.putParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOES_SELECTED, (ArrayList<? extends Parcelable>) selectedPhotos);
         setResult(RESULT_OK, sIntent);
         finish();
     }
 
     @Override
-    public void onResultCallback(List<PhotoDirectory<BasePhotoFileEntity>> directories) {
+    public void onResultCallback(List<PhotoDirectoryEntity<PhotoFileEntity>> directories) {
         this.mPhotoDirs = directories;
-        ////directories.get(0) contains the all photoes. so this as the whole directory.
-        final List<BasePhotoFileEntity> photos = directories.get(0).getPhotos();
+        final List<PhotoFileEntity> photos = directories.get(0).getPhotos();
         if (mGridAdapter == null) {
             if (photos.size() == 0) {
                 // return;
             }
-            mGridAdapter = new PhotoGridAdapter<BasePhotoFileEntity>(R.layout.item_photo,
-                    photos, ISelectable.SELECT_MODE_MULTI) {
+            mGridAdapter = new PhotoGridAdapter<PhotoFileEntity>(R.layout.item_photo, photos, ISelectable.SELECT_MODE_MULTI) {
                 @Override
                 protected void applySelectState(ImageView selectIcon, boolean selected) {
                     selectIcon.setImageResource(selected ? R.mipmap.pic_check_select : R.mipmap.pic_check_normal);
@@ -213,7 +214,6 @@ public class PhotoPickerTestActivity extends Activity implements PhotoPickerHelp
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             mPickerHelper.scanPhotoes(this);
-        } else {
         }
     }
 
