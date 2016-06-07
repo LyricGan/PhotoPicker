@@ -19,8 +19,8 @@ import android.widget.TextView;
 import com.heaven7.adapter.ISelectable;
 import com.heaven7.core.util.ViewHelper;
 import com.photopicker.app.R;
-import com.photopicker.library.picker.PhotoFileEntity;
 import com.photopicker.library.picker.PhotoDirectoryEntity;
+import com.photopicker.library.picker.PhotoFileEntity;
 import com.photopicker.library.picker.PhotoGridAdapter;
 import com.photopicker.library.picker.PhotoPickerFactory;
 import com.photopicker.library.picker.PhotoPickerHelper;
@@ -35,7 +35,6 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
 
     private PhotoPickerHelper mPickerHelper;
     private List<PhotoDirectoryEntity<PhotoFileEntity>> mPhotoDirs;
-
     private PhotoGridAdapter<PhotoFileEntity> mGridAdapter;
 
     @Override
@@ -63,16 +62,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
         rv_photos.setLayoutManager(layoutManager);
         rv_photos.addItemDecoration(new SpacesItemDecoration((int) getResources().getDimension(R.dimen.photo_width)));
 
-        PhotoPickerFactory.setImageLoader(new DraweeImageLoader(0));
-        //this also is the default factory
-        PhotoPickerFactory.setPhotoFileEntityFactory(new PhotoPickerFactory.IPhotoFileEntityFactory<PhotoFileEntity>() {
-            @Override
-            public PhotoFileEntity create(int id, String path) {
-                return new PhotoFileEntity(id, path);
-            }
-        });
         mPickerHelper = PhotoPickerFactory.createPhotoPickerHelper(this);
-
         if (savedInstanceState != null) {
             mPickerHelper.setPhotoPath(savedInstanceState.getString("image", null));
         }
@@ -120,10 +110,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
 
         @Override
         public boolean shouldIgnoreClickEventOfSelectIcon(int position, PhotoFileEntity item, List<PhotoFileEntity> selectItems) {
-            if (selectItems != null && selectItems.size() == 9) {
-                return true;
-            }
-            return false;
+            return (selectItems != null && selectItems.size() == 9);
         }
     };
 
@@ -183,9 +170,6 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
         this.mPhotoDirs = directories;
         final List<PhotoFileEntity> photos = directories.get(0).getPhotos();
         if (mGridAdapter == null) {
-            if (photos.size() == 0) {
-                // return;
-            }
             mGridAdapter = new PhotoGridAdapter<PhotoFileEntity>(R.layout.item_photo, photos, ISelectable.SELECT_MODE_MULTI) {
                 @Override
                 protected void applySelectState(ImageView selectIcon, boolean selected) {

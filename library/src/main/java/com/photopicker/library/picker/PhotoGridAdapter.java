@@ -10,11 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.heaven7.adapter.AdapterManager;
 import com.heaven7.adapter.HeaderFooterHelper;
 import com.heaven7.adapter.ISelectable;
-import com.heaven7.adapter.QuickRecycleViewAdapter;
-import com.heaven7.core.util.ViewHelper;
 import com.photopicker.library.R;
 import com.photopicker.library.view.PhotoView;
 

@@ -2,13 +2,11 @@ package com.photopicker.library.picker;
 
 import android.app.Activity;
 
-import com.heaven7.core.util.ViewHelper;
-
 public final class PhotoPickerFactory {
     private static IPhotoFileEntityFactory sPhotoFactory;
-    private static ViewHelper.IImageLoader sImageLoader;
+    private static IImageLoader sImageLoader;
 
-    private static final IPhotoFileEntityFactory<PhotoFileEntity> sDefaultFacory
+    private static final IPhotoFileEntityFactory<PhotoFileEntity> sDefaultFactory
             = new IPhotoFileEntityFactory<PhotoFileEntity>() {
         @Override
         public PhotoFileEntity create(int id, String path) {
@@ -50,7 +48,7 @@ public final class PhotoPickerFactory {
      *
      * @param imageLoader the image loader
      */
-    public static void setImageLoader(ViewHelper.IImageLoader imageLoader) {
+    public static void setImageLoader(IImageLoader imageLoader) {
         sImageLoader = imageLoader;
     }
 
@@ -60,13 +58,16 @@ public final class PhotoPickerFactory {
      * @return photo picker entity factory
      */
     public static IPhotoFileEntityFactory getPhotoFileEntityFactory() {
-        return sPhotoFactory != null ? sPhotoFactory : sDefaultFacory;
+        return sPhotoFactory != null ? sPhotoFactory : sDefaultFactory;
     }
 
     /**
      * get the image loader
      */
-    public static ViewHelper.IImageLoader getImageLoader() {
+    public static IImageLoader getImageLoader() {
+        if (sImageLoader == null) {
+            return new DefaultImageLoader(0);
+        }
         return sImageLoader;
     }
 }
