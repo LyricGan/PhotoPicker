@@ -2,8 +2,6 @@ package com.photopicker.library.picker;
 
 import android.util.Log;
 
-import com.heaven7.adapter.ISelectable;
-
 import java.util.ArrayList;
 import java.util.List;
 

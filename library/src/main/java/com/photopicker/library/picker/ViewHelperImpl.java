@@ -20,13 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.heaven7.core.util.ViewCompatUtil;
-
-/**
- * @author lyric
- * @description
- * @time 2016/6/7 18:57
- */
 public class ViewHelperImpl {
     private View v;
 
@@ -270,5 +263,4 @@ public class ViewHelperImpl {
         ((TextView) v).setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
         return this;
     }
-
 }

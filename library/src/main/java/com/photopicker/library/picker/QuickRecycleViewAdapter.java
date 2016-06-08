@@ -8,16 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.heaven7.adapter.HeaderFooterHelper;
-import com.heaven7.adapter.ISelectable;
-
 import java.util.List;
 
-/**
- * @author lyric
- * @description
- * @time 2016/6/7 19:03
- */
 public abstract class QuickRecycleViewAdapter<T extends ISelectable>
         extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements AdapterManager.IAdapterManagerCallback, AdapterManager.IHeaderFooterManager ,

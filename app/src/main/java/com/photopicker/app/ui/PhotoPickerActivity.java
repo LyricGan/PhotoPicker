@@ -16,14 +16,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.heaven7.adapter.ISelectable;
-import com.heaven7.core.util.ViewHelper;
 import com.photopicker.app.R;
+import com.photopicker.library.picker.ISelectable;
 import com.photopicker.library.picker.PhotoDirectoryEntity;
 import com.photopicker.library.picker.PhotoFileEntity;
 import com.photopicker.library.picker.PhotoGridAdapter;
 import com.photopicker.library.picker.PhotoPickerFactory;
 import com.photopicker.library.picker.PhotoPickerHelper;
+import com.photopicker.library.picker.ViewHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
