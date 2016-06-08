@@ -20,7 +20,7 @@ import com.photopicker.app.R;
 import com.photopicker.library.picker.ISelectable;
 import com.photopicker.library.picker.PhotoDirectoryEntity;
 import com.photopicker.library.picker.PhotoFileEntity;
-import com.photopicker.library.picker.PhotoGridAdapter;
+import com.photopicker.library.picker.PhotoPickerAdapter;
 import com.photopicker.library.picker.PhotoPickerFactory;
 import com.photopicker.library.picker.PhotoPickerHelper;
 import com.photopicker.library.picker.ViewHelper;
@@ -35,7 +35,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
 
     private PhotoPickerHelper mPickerHelper;
     private List<PhotoDirectoryEntity<PhotoFileEntity>> mPhotoDirs;
-    private PhotoGridAdapter<PhotoFileEntity> mGridAdapter;
+    private PhotoPickerAdapter<PhotoFileEntity> mPickerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
         }
     }
 
-    private final PhotoGridAdapter.ICallback<PhotoFileEntity> mCallback = new PhotoGridAdapter.ICallback<PhotoFileEntity>() {
+    private final PhotoPickerAdapter.ICallback<PhotoFileEntity> mCallback = new PhotoPickerAdapter.ICallback<PhotoFileEntity>() {
         @Override
         public void onClickCamera(View itemView) {
             try {
@@ -85,9 +85,9 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
 
         @Override
         public void onClickItemView(View itemView, int position, PhotoFileEntity item) {
-            List<PhotoFileEntity> selectItems = mGridAdapter.getSelectHelper().getSelectedItems();
-            ArrayList<PhotoFileEntity> photoes = new ArrayList<>(mGridAdapter.getAdapterManager().getItems());
-            if (mGridAdapter.isShowCamera()) {
+            List<PhotoFileEntity> selectItems = mPickerAdapter.getSelectHelper().getSelectedItems();
+            ArrayList<PhotoFileEntity> photoes = new ArrayList<>(mPickerAdapter.getAdapterManager().getItems());
+            if (mPickerAdapter.isShowCamera()) {
                 photoes.remove(0);
                 position -= 1;
             }
@@ -95,7 +95,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
             bundle.putInt(PhotoPickerHelper.KEY_SELECT_INDEX, position);
             bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES, photoes);
             if (selectItems != null) {
-                bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES_SELECTED, new ArrayList<>(mGridAdapter.getSelectHelper().getSelectedItems()));
+                bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES_SELECTED, new ArrayList<>(mPickerAdapter.getSelectHelper().getSelectedItems()));
             }
             Intent intent = new Intent(PhotoPickerActivity.this, PhotoPagerActivity.class);
             intent.putExtras(bundle);
@@ -150,8 +150,8 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
                 dirs.getPhotos().add(0, entity);
                 dirs.setPath(path);
                 //notify adapter
-                mGridAdapter.clearAllSelected();
-                mGridAdapter.getAdapterManager().getItems().add(0, entity);
+                mPickerAdapter.clearAllSelected();
+                mPickerAdapter.getAdapterManager().getItems().add(0, entity);
                 // finishSelect();
                 break;
         }
@@ -159,7 +159,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
 
     private void finishSelect() {
         Intent sIntent = new Intent();
-        List<PhotoFileEntity> selectedPhotos = mGridAdapter.getSelectHelper().getSelectedItems();
+        List<PhotoFileEntity> selectedPhotos = mPickerAdapter.getSelectHelper().getSelectedItems();
         sIntent.putParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOES_SELECTED, (ArrayList<? extends Parcelable>) selectedPhotos);
         setResult(RESULT_OK, sIntent);
         finish();
@@ -169,8 +169,8 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
     public void onResultCallback(List<PhotoDirectoryEntity<PhotoFileEntity>> directories) {
         this.mPhotoDirs = directories;
         final List<PhotoFileEntity> photos = directories.get(0).getPhotos();
-        if (mGridAdapter == null) {
-            mGridAdapter = new PhotoGridAdapter<PhotoFileEntity>(R.layout.item_photo, photos, ISelectable.SELECT_MODE_MULTI) {
+        if (mPickerAdapter == null) {
+            mPickerAdapter = new PhotoPickerAdapter<PhotoFileEntity>(R.layout.item_photo, photos, ISelectable.SELECT_MODE_MULTI) {
                 @Override
                 protected void applySelectState(ImageView selectIcon, boolean selected) {
                     selectIcon.setImageResource(selected ? R.mipmap.pic_check_select : R.mipmap.pic_check_normal);
@@ -186,10 +186,10 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
                     return R.layout.item_photo_camera;
                 }
             };
-            mGridAdapter.setCallback(mCallback);
-            rv_photos.setAdapter(mGridAdapter);
+            mPickerAdapter.setCallback(mCallback);
+            rv_photos.setAdapter(mPickerAdapter);
         } else {
-            mGridAdapter.getAdapterManager().replaceAllItems(photos);
+            mPickerAdapter.getAdapterManager().replaceAllItems(photos);
         }
     }
 

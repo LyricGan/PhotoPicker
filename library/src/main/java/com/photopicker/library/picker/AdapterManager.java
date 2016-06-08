@@ -236,8 +236,6 @@ public class AdapterManager<T extends ISelectable> implements SelectHelper.Callb
         return getItemAt(position);
     }
 
-    //================== ========================//
-
     public IHeaderFooterManager getHeaderFooterManager() {
         throw new UnsupportedOperationException();
     }
@@ -347,7 +345,5 @@ public class AdapterManager<T extends ISelectable> implements SelectHelper.Callb
 
         public void notifyItemRangeRemoved(int positionStart, int itemCount) {
         }
-
     }
-
 }

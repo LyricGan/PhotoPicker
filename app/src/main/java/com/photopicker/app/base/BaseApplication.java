@@ -9,11 +9,6 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 
 import java.io.File;
 
-/**
- * @author lyric
- * @description APP入口
- * @time 2016/6/6 19:34
- */
 public class BaseApplication extends Application {
     private static BaseApplication mContext;
 

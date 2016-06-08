@@ -15,7 +15,7 @@ import com.photopicker.library.view.PhotoView;
 
 import java.util.List;
 
-public abstract class PhotoGridAdapter<T extends IPhotoFileEntity> extends QuickRecycleViewAdapter<T> {
+public abstract class PhotoPickerAdapter<T extends IPhotoFileEntity> extends QuickRecycleViewAdapter<T> {
     private static final int VIEW_TYPE_CAMERA = -1;
     private boolean mShowCamera = true;
     private ICallback<T> mCallback;
@@ -26,7 +26,7 @@ public abstract class PhotoGridAdapter<T extends IPhotoFileEntity> extends Quick
      * @param layoutId item layout id
      * @param mDatas   the data of the grid
      */
-    public PhotoGridAdapter(int layoutId, List<T> mDatas) {
+    public PhotoPickerAdapter(int layoutId, List<T> mDatas) {
         super(layoutId, mDatas, ISelectable.SELECT_MODE_SINGLE);
     }
 
@@ -36,7 +36,7 @@ public abstract class PhotoGridAdapter<T extends IPhotoFileEntity> extends Quick
      * @param selectMode the select mode ,see {@link ISelectable#SELECT_MODE_MULTI}
      *                   or  {@link ISelectable#SELECT_MODE_SINGLE}
      */
-    public PhotoGridAdapter(int layoutId, List<T> mDatas, int selectMode) {
+    public PhotoPickerAdapter(int layoutId, List<T> mDatas, int selectMode) {
         super(layoutId, mDatas, selectMode);
         if (isShowCamera()) {
             T t = (T) PhotoPickerFactory.getPhotoFileEntityFactory().create(-1, "camera");

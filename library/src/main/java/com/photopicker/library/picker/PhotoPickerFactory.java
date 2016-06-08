@@ -42,7 +42,7 @@ public final class PhotoPickerFactory {
     }
 
     /**
-     * set the image loader to load image .this will use in {@link PhotoGridAdapter}
+     * set the image loader to load image .this will use in {@link PhotoPickerAdapter}
      * you can cross this use frecro image library or glide or other image library to load.
      * this  is useful.
      *

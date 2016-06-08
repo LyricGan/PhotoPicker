@@ -13,13 +13,7 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.CompoundButton;
 
-/**
- * @author lyric
- * @description
- * @time 2016/6/7 18:56
- */
 public class ViewHelper {
-
     private final SparseArray<View> mViewMap;
     private final View mRootView;
     private final ViewHelperImpl mImpl;
@@ -78,11 +72,11 @@ public class ViewHelper {
     }
 
     /**
-     * toogle the visibility of the view.such as: VISIBLE to gone or gone to VISIBLE
+     * toggle the visibility of the view.such as: VISIBLE to gone or gone to VISIBLE
      *
      * @param viewId the id of view
      */
-    public ViewHelper toogleVisibility(int viewId) {
+    public ViewHelper toggleVisibility(int viewId) {
         return view(viewId).toogleVisibility().reverse(this);
     }
 
