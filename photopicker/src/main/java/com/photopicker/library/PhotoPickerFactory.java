@@ -1,4 +1,4 @@
-package com.photopicker.library.picker;
+package com.photopicker.library;
 
 import android.app.Activity;
 
@@ -6,11 +6,11 @@ public final class PhotoPickerFactory {
     private static IPhotoFileEntityFactory sPhotoFactory;
     private static IImageLoader sImageLoader;
 
-    private static final IPhotoFileEntityFactory<PhotoFileEntity> sDefaultFactory
-            = new IPhotoFileEntityFactory<PhotoFileEntity>() {
+    private static final IPhotoFileEntityFactory<PhotoEntity> sDefaultFactory
+            = new IPhotoFileEntityFactory<PhotoEntity>() {
         @Override
-        public PhotoFileEntity create(int id, String path) {
-            return new PhotoFileEntity(id, path);
+        public PhotoEntity create(int id, String path) {
+            return new PhotoEntity(id, path);
         }
     };
 
@@ -19,7 +19,7 @@ public final class PhotoPickerFactory {
      *
      * @param <T>
      */
-    public interface IPhotoFileEntityFactory<T extends IPhotoFileEntity> {
+    public interface IPhotoFileEntityFactory<T extends IPhoto> {
         T create(int id, String path);
     }
 
@@ -37,7 +37,7 @@ public final class PhotoPickerFactory {
      *
      * @param factory the factory
      */
-    public static <T extends IPhotoFileEntity> void setPhotoFileEntityFactory(IPhotoFileEntityFactory<T> factory) {
+    public static <T extends IPhoto> void setPhotoFileEntityFactory(IPhotoFileEntityFactory<T> factory) {
         sPhotoFactory = factory;
     }
 

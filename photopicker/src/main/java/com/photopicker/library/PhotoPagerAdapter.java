@@ -1,4 +1,4 @@
-package com.photopicker.library.picker;
+package com.photopicker.library;
 
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public abstract class PhotoPagerAdapter<T extends IPhotoFileEntity> extends PagerAdapter {
+public abstract class PhotoPagerAdapter<T extends IPhoto> extends PagerAdapter {
     private final List<T> mData;
 
     public PhotoPagerAdapter(List<T> mData) {

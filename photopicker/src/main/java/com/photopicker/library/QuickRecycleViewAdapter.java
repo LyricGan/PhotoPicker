@@ -1,4 +1,4 @@
-package com.photopicker.library.picker;
+package com.photopicker.library;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+public abstract class QuickRecycleViewAdapter<T extends Selectable> extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements AdapterManager.IAdapterManagerCallback, AdapterManager.IHeaderFooterManager, AdapterManager.IAdapterManagerCallback2 {
     private int mLayoutId = 0;
     private HeaderFooterHelper mHeaderFooterHelper;
@@ -18,31 +18,31 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
 
     /**
      * create QuickRecycleViewAdapter with the layout id. if layoutId==0, the method
-     * {@link #getItemLayoutId(int, ISelectable)} will be called.
+     * {@link #getItemLayoutId(int, Selectable)} will be called.
      *
      * @param layoutId the layout id you want to inflate, or 0 if you want multi item.
      * @param mDatas
      */
     public QuickRecycleViewAdapter(int layoutId, List<T> mDatas) {
-        this(layoutId, mDatas, ISelectable.SELECT_MODE_SINGLE);
+        this(layoutId, mDatas, SelectMode.SINGLE);
     }
 
     /**
      * create QuickRecycleViewAdapter with the layout id. if layoutId==0, the method
-     * {@link #getItemLayoutId(int, ISelectable)} will be called.
+     * {@link #getItemLayoutId(int, Selectable)} will be called.
      *
      * @param layoutId   the layout id you want to inflate, or 0 if you want multi item.
      * @param mDatas
      * @param selectMode select mode
      */
-    public QuickRecycleViewAdapter(int layoutId, List<T> mDatas, int selectMode) {
+    public QuickRecycleViewAdapter(int layoutId, List<T> mDatas, SelectMode selectMode) {
         this(layoutId, mDatas, selectMode, true);
     }
 
     /**
      * internal
      */
-    QuickRecycleViewAdapter(int layoutId, List<T> mDatas, int selectMode, boolean callFinalInit) {
+    QuickRecycleViewAdapter(int layoutId, List<T> mDatas, SelectMode selectMode, boolean callFinalInit) {
         if (layoutId < 0) {
             throw new IllegalArgumentException("layoutId can't be negative ");
         }
@@ -63,7 +63,6 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
      */
     @Override
     public void beforeNotifyDataChanged() {
-
     }
 
     /**
@@ -71,17 +70,14 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
      */
     @Override
     public void afterNotifyDataChanged() {
-
     }
 
     /**
      * the init operation of the last, called in constructor
      */
     protected void onFinalInit() {
-
     }
 
-    //=================== start header footer view ======================= //
     @Override
     public void addHeaderView(View v) {
         if (mHeaderFooterHelper == null)
@@ -129,8 +125,6 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
     public int getFooterSize() {
         return mHeaderFooterHelper == null ? 0 : mHeaderFooterHelper.getFooterViewSize();
     }
-    // =================== end header footer view ======================= //
-
 
     @Override
     public final boolean isRecyclable() {
@@ -145,81 +139,16 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
         return mAdapterManager.getItems().get(position);
     }
 
-    /**
-     * select the target position
-     * only support select mode = {@link ISelectable#SELECT_MODE_MULTI}
-     **/
-    public void addSelected(int selectPosition) {
-        getSelectHelper().addSelected(selectPosition);
-    }
-
-    /**
-     * un select the target position  .
-     * <li>only support select mode = {@link ISelectable#SELECT_MODE_MULTI}
-     */
-    public void addUnselected(int position) {
-        getSelectHelper().addUnselected(position);
-    }
-
-    /**
-     * un select the all selected position.
-     * mode single or multi all supoorted
-     */
-    public void clearAllSelected() {
-        getSelectHelper().clearAllSelected();
-    }
-
-    /**
-     * select the target position with notify data.if currentPosition  == position.ignore it.
-     * <li></>only support select mode = {@link ISelectable#SELECT_MODE_SINGLE} ,this will auto update
-     **/
-    public void setSelected(int position) {
-        getSelectHelper().setSelected(position);
-    }
-
-    /**
-     * un select the target position
-     * <li>only support select mode = {@link ISelectable#SELECT_MODE_SINGLE}
-     */
-    public void setUnselected(int position) {
-        getSelectHelper().setUnselected(position);
-    }
-
-    /**
-     * clear selected positions  . this just clear record. bu not notify item change
-     * <li> support select mode = {@link ISelectable#SELECT_MODE_SINGLE} or {@link ISelectable#SELECT_MODE_MULTI}
-     */
-    public void clearSelectedPositions() {
-        getSelectHelper().clearSelectedPositions();
-    }
-
-    public T getSelectedData() {
-        return getSelectHelper().getSelectedItem();
-    }
-
-    public List<T> getSelectedItems() {
-        return getSelectHelper().getSelectedItems();
-    }
-
-    public int getSelectedPosition() {
-        return getSelectHelper().getSelectedPosition();
-    }
-
-    //====================== begin items ========================//
-
     @Override
     public AdapterManager<T> getAdapterManager() {
         return mAdapterManager;
     }
 
-    //====================== end items ========================//
-
     @Override
     public final int getItemViewType(int position) {
         if (mHeaderFooterHelper != null) {
             //in header or footer
-            if (mHeaderFooterHelper.isInHeader(position) ||
-                    mHeaderFooterHelper.isInFooter(position, mAdapterManager.getItemSize()))
+            if (mHeaderFooterHelper.isInHeader(position) || mHeaderFooterHelper.isInFooter(position, mAdapterManager.getItemSize()))
                 return position;
 
             position -= mHeaderFooterHelper.getHeaderViewSize();
@@ -241,11 +170,9 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
     }
 
     @NonNull
-    protected RecyclerView.ViewHolder onCreateViewHolderImpl(HeaderFooterHelper hfHelper,
-                                                             ViewGroup parent, int viewType) {
+    protected RecyclerView.ViewHolder onCreateViewHolderImpl(HeaderFooterHelper hfHelper, ViewGroup parent, int viewType) {
         if (this.mHeaderFooterHelper == null || this.mHeaderFooterHelper.isLayoutIdInRecord(viewType)) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(
-                    viewType, parent, false), viewType);
+            return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false), viewType);
         } else {
             return new ViewHolder(this.mHeaderFooterHelper.findView(viewType, mAdapterManager.getItemSize()));
         }
@@ -254,8 +181,7 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
     @Override
     public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (mHeaderFooterHelper != null) {
-            if (mHeaderFooterHelper.isInHeader(position)
-                    || mHeaderFooterHelper.isInFooter(position, mAdapterManager.getItemSize())) {
+            if (mHeaderFooterHelper.isInHeader(position) || mHeaderFooterHelper.isInFooter(position, mAdapterManager.getItemSize())) {
                 return;
             }
             position -= mHeaderFooterHelper.getHeaderViewSize();
@@ -273,8 +199,7 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
 
         if (getAdapterManager().getPostRunnableCallbacks() != null) {
             final int pos = position;
-            for (final AdapterManager.IPostRunnableCallback<T> callback : getAdapterManager()
-                    .getPostRunnableCallbacks()) {
+            for (final AdapterManager.IPostRunnableCallback<T> callback : getAdapterManager().getPostRunnableCallbacks()) {
                 holder.itemView.post(new Runnable() {
                     @Override
                     public void run() {
@@ -294,8 +219,7 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
     @Override
     public final int getItemCount() {
         return mHeaderFooterHelper == null ? mAdapterManager.getItemSize() :
-                mAdapterManager.getItemSize() + mHeaderFooterHelper.getHeaderViewSize() +
-                        mHeaderFooterHelper.getFooterViewSize();
+                mAdapterManager.getItemSize() + mHeaderFooterHelper.getHeaderViewSize() + mHeaderFooterHelper.getFooterViewSize();
     }
 
     // may use
@@ -310,16 +234,14 @@ public abstract class QuickRecycleViewAdapter<T extends ISelectable> extends Rec
     /**
      * if you use multi item ,override this
      */
-    protected
     @LayoutRes
-    int getItemLayoutId(int position, T t) {
+    protected int getItemLayoutId(int position, T t) {
         return mLayoutId;
     }
 
-    protected abstract void onBindData(Context context, int position, T item,
-                                       int itemLayoutId, ViewHelper helper);
+    protected abstract void onBindData(Context context, int position, T item, int itemLayoutId, ViewHelper helper);
 
-    /*public*/ static class ViewHolder extends RecyclerView.ViewHolder implements IRecyclerViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder implements IRecyclerViewHolder {
 
         public final ViewHelper mViewHelper;
         /**

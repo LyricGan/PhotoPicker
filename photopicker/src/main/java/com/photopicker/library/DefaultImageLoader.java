@@ -1,4 +1,4 @@
-package com.photopicker.library.picker;
+package com.photopicker.library;
 
 import android.net.Uri;
 import android.widget.ImageView;
@@ -11,7 +11,6 @@ import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.photopicker.library.R;
 
 import java.io.File;
 

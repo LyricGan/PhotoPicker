@@ -17,34 +17,37 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.photopicker.app.R;
-import com.photopicker.library.picker.ISelectable;
-import com.photopicker.library.picker.PhotoDirectoryEntity;
-import com.photopicker.library.picker.PhotoFileEntity;
-import com.photopicker.library.picker.PhotoPickerAdapter;
-import com.photopicker.library.picker.PhotoPickerFactory;
-import com.photopicker.library.picker.PhotoPickerHelper;
-import com.photopicker.library.picker.ViewHelper;
+import com.photopicker.library.PhotoDirectoryEntity;
+import com.photopicker.library.PhotoEntity;
+import com.photopicker.library.PhotoPickerAdapter;
+import com.photopicker.library.PhotoPickerFactory;
+import com.photopicker.library.PhotoPickerHelper;
+import com.photopicker.library.SelectMode;
+import com.photopicker.library.ViewHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.PhotoLoadResultCallback<PhotoFileEntity> {
+public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.OnPhotoResultCallback<PhotoEntity> {
+    private static final int TOTAL_COUNT = 9;
     private TextView tv_done_notice;
     private RecyclerView rv_photos;
 
     private PhotoPickerHelper mPickerHelper;
-    private List<PhotoDirectoryEntity<PhotoFileEntity>> mPhotoDirs;
-    private PhotoPickerAdapter<PhotoFileEntity> mPickerAdapter;
+    private List<PhotoDirectoryEntity<PhotoEntity>> mPhotoDirectoryList;
+    private PhotoPickerAdapter<PhotoEntity> mPickerAdapter;
+    private int mCurrentCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_picker);
-        final ImageView iv_back = (ImageView) findViewById(R.id.iv_back);
-        final TextView tv_all_image = (TextView) findViewById(R.id.tv_all_image);
+        ImageView iv_back = (ImageView) findViewById(R.id.iv_back);
         tv_done_notice = (TextView) findViewById(R.id.tv_done_notice);
         rv_photos = (RecyclerView) findViewById(R.id.rv_photos);
+
+        initialize();
 
         iv_back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,20 +55,19 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
                 finish();
             }
         });
-        tv_all_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        if (mPickerHelper != null && savedInstanceState != null) {
+            mPickerHelper.setPhotoPath(savedInstanceState.getString("image", null));
+        }
+    }
 
-            }
-        });
+    private void initialize() {
+        updateTitle(mCurrentCount);
+
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
         rv_photos.setLayoutManager(layoutManager);
         rv_photos.addItemDecoration(new SpacesItemDecoration((int) getResources().getDimension(R.dimen.photo_width)));
 
         mPickerHelper = PhotoPickerFactory.createPhotoPickerHelper(this);
-        if (savedInstanceState != null) {
-            mPickerHelper.setPhotoPath(savedInstanceState.getString("image", null));
-        }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
         } else {
@@ -73,9 +75,9 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
         }
     }
 
-    private final PhotoPickerAdapter.ICallback<PhotoFileEntity> mCallback = new PhotoPickerAdapter.ICallback<PhotoFileEntity>() {
+    private final PhotoPickerAdapter.ICallback<PhotoEntity> mCallback = new PhotoPickerAdapter.ICallback<PhotoEntity>() {
         @Override
-        public void onClickCamera(View itemView) {
+        public void onCameraViewClick(View itemView) {
             try {
                 startActivityForResult(mPickerHelper.makeTakePhotoIntent(), PhotoPickerHelper.REQUEST_TAKE_PHOTO);
             } catch (IOException e) {
@@ -84,16 +86,16 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
         }
 
         @Override
-        public void onClickItemView(View itemView, int position, PhotoFileEntity item) {
-            List<PhotoFileEntity> selectItems = mPickerAdapter.getSelectHelper().getSelectedItems();
-            ArrayList<PhotoFileEntity> photoes = new ArrayList<>(mPickerAdapter.getAdapterManager().getItems());
+        public void onItemViewClick(View itemView, int position, PhotoEntity item) {
+            List<PhotoEntity> selectItems = mPickerAdapter.getSelectHelper().getSelectedItems();
+            ArrayList<PhotoEntity> photoList = new ArrayList<>(mPickerAdapter.getAdapterManager().getItems());
             if (mPickerAdapter.isShowCamera()) {
-                photoes.remove(0);
+                photoList.remove(0);
                 position -= 1;
             }
             Bundle bundle = new Bundle();
             bundle.putInt(PhotoPickerHelper.KEY_SELECT_INDEX, position);
-            bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES, photoes);
+            bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES, photoList);
             if (selectItems != null) {
                 bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES_SELECTED, new ArrayList<>(mPickerAdapter.getSelectHelper().getSelectedItems()));
             }
@@ -103,14 +105,14 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
         }
 
         @Override
-        public void onClickSelectIcon(View itemView, int position, PhotoFileEntity item, List<PhotoFileEntity> selectItems) {
-            int size = selectItems != null ? selectItems.size() : 0;
-            tv_done_notice.setText(getString(R.string.template_done, size));
+        public void onSelectViewClick(View itemView, int position, PhotoEntity item, List<PhotoEntity> selectItems) {
+            mCurrentCount = selectItems != null ? selectItems.size() : 0;
+            updateTitle(mCurrentCount);
         }
 
         @Override
-        public boolean shouldIgnoreClickEventOfSelectIcon(int position, PhotoFileEntity item, List<PhotoFileEntity> selectItems) {
-            return (selectItems != null && selectItems.size() == 9);
+        public boolean shouldIgnoreSelectViewClick(int position, PhotoEntity item, List<PhotoEntity> selectItems) {
+            return (selectItems != null && selectItems.size() == TOTAL_COUNT && !item.isSelected());
         }
     };
 
@@ -129,48 +131,54 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode != RESULT_OK) return;
+        if (resultCode != RESULT_OK) {
+            return;
+        }
         switch (requestCode) {
-            case PhotoPickerHelper.REQUEST_CODE_SEE_BIG_PIC:
+            case PhotoPickerHelper.REQUEST_CODE_SEE_BIG_PIC: {
                 finishSelect();
+            }
                 break;
-            case PhotoPickerHelper.REQUEST_TAKE_PHOTO:
+            case PhotoPickerHelper.REQUEST_TAKE_PHOTO: {
                 mPickerHelper.scanFileToDatabase();
                 // setting -> 开发者选项-》用户离开后即销毁每个活动。会造成当前的activity销毁。然后还没扫描完成就走 onActivityResult
-                if (mPhotoDirs == null) {
+                if (mPhotoDirectoryList == null) {
                     mPickerHelper.scanPhotoes(this);
                     return;
                 }
                 String path = mPickerHelper.getCurrentPhotoPath();
-                PhotoFileEntity entity = (PhotoFileEntity) PhotoPickerFactory.getPhotoFileEntityFactory()
-                        .create(path.hashCode(), path);
+                PhotoEntity entity = (PhotoEntity) PhotoPickerFactory.getPhotoFileEntityFactory().create(path.hashCode(), path);
                 //add to dir
-                final PhotoDirectoryEntity<PhotoFileEntity> dirs = mPhotoDirs.get(PhotoPickerHelper.INDEX_ALL_PHOTOS);
-                dirs.getPhotos().add(0, entity);
+                final PhotoDirectoryEntity<PhotoEntity> dirs = mPhotoDirectoryList.get(PhotoPickerHelper.INDEX_ALL_PHOTOS);
+                dirs.getPhotoList().add(0, entity);
                 dirs.setPath(path);
                 //notify adapter
-                mPickerAdapter.clearAllSelected();
+                mPickerAdapter.getSelectHelper().clearAllSelected();
                 mPickerAdapter.getAdapterManager().getItems().add(0, entity);
                 // finishSelect();
+            }
                 break;
         }
     }
 
+    private void updateTitle(int currentCount) {
+        tv_done_notice.setText(getString(R.string.template_done, currentCount, TOTAL_COUNT));
+    }
+
     private void finishSelect() {
         Intent sIntent = new Intent();
-        List<PhotoFileEntity> selectedPhotos = mPickerAdapter.getSelectHelper().getSelectedItems();
+        List<PhotoEntity> selectedPhotos = mPickerAdapter.getSelectHelper().getSelectedItems();
         sIntent.putParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOES_SELECTED, (ArrayList<? extends Parcelable>) selectedPhotos);
         setResult(RESULT_OK, sIntent);
         finish();
     }
 
     @Override
-    public void onResultCallback(List<PhotoDirectoryEntity<PhotoFileEntity>> directories) {
-        this.mPhotoDirs = directories;
-        final List<PhotoFileEntity> photos = directories.get(0).getPhotos();
+    public void callback(List<PhotoDirectoryEntity<PhotoEntity>> directoryList) {
+        this.mPhotoDirectoryList = directoryList;
+        final List<PhotoEntity> photos = directoryList.get(0).getPhotoList();
         if (mPickerAdapter == null) {
-            mPickerAdapter = new PhotoPickerAdapter<PhotoFileEntity>(R.layout.item_photo, photos, ISelectable.SELECT_MODE_MULTI) {
+            mPickerAdapter = new PhotoPickerAdapter<PhotoEntity>(R.layout.item_photo, photos, SelectMode.MULTIPLE) {
                 @Override
                 protected void applySelectState(ImageView selectIcon, boolean selected) {
                     selectIcon.setImageResource(selected ? R.mipmap.pic_check_select : R.mipmap.pic_check_normal);

@@ -4,7 +4,7 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content">
 
-    <com.photopicker.library.view.PhotoView
+    <com.photopicker.library.view.DefaultPhotoView
         android:id="@id/photo_picker_iv_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

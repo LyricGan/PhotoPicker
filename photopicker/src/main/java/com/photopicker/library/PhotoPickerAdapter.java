@@ -1,8 +1,7 @@
-package com.photopicker.library.picker;
+package com.photopicker.library;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,37 +9,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.photopicker.library.R;
-import com.photopicker.library.view.PhotoView;
+import com.photopicker.library.view.DefaultPhotoView;
 
 import java.util.List;
 
-public abstract class PhotoPickerAdapter<T extends IPhotoFileEntity> extends QuickRecycleViewAdapter<T> {
+public abstract class PhotoPickerAdapter<T extends IPhoto> extends QuickRecycleViewAdapter<T> {
     private static final int VIEW_TYPE_CAMERA = -1;
     private boolean mShowCamera = true;
     private ICallback<T> mCallback;
 
     /**
-     * default select mode {@link ISelectable#SELECT_MODE_SINGLE}
+     * default select mode {@link SelectMode#SINGLE}
      *
      * @param layoutId item layout id
      * @param mDatas   the data of the grid
      */
     public PhotoPickerAdapter(int layoutId, List<T> mDatas) {
-        super(layoutId, mDatas, ISelectable.SELECT_MODE_SINGLE);
+        super(layoutId, mDatas, SelectMode.SINGLE);
     }
 
     /**
      * @param layoutId   item layout id
      * @param mDatas     the data of the grid
-     * @param selectMode the select mode ,see {@link ISelectable#SELECT_MODE_MULTI}
-     *                   or  {@link ISelectable#SELECT_MODE_SINGLE}
+     * @param selectMode the select mode ,see {@link SelectMode#MULTIPLE}
+     *                   or  {@link SelectMode#SINGLE}
      */
-    public PhotoPickerAdapter(int layoutId, List<T> mDatas, int selectMode) {
+    public PhotoPickerAdapter(int layoutId, List<T> mDatas, SelectMode selectMode) {
         super(layoutId, mDatas, selectMode);
         if (isShowCamera()) {
             T t = (T) PhotoPickerFactory.getPhotoFileEntityFactory().create(-1, "camera");
-            getAdapterManager().addItem(t);//add a place holder for show camera
+            getAdapterManager().addItem(t, 0);//add a place holder for show camera
         }
     }
 
@@ -86,11 +84,9 @@ public abstract class PhotoPickerAdapter<T extends IPhotoFileEntity> extends Qui
 
     @NonNull
     @Override
-    protected RecyclerView.ViewHolder onCreateViewHolderImpl(HeaderFooterHelper hfHelper,
-                                                             ViewGroup parent, int viewType) {
+    protected RecyclerView.ViewHolder onCreateViewHolderImpl(HeaderFooterHelper hfHelper, ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_CAMERA) {
-            return new ViewHolder2(LayoutInflater.from(parent.getContext()).inflate(
-                    getCameraItemLayoutId(), parent, false));
+            return new ViewHolder2(LayoutInflater.from(parent.getContext()).inflate(getCameraItemLayoutId(), parent, false));
         }
         return super.onCreateViewHolderImpl(hfHelper, parent, viewType);
     }
@@ -115,24 +111,17 @@ public abstract class PhotoPickerAdapter<T extends IPhotoFileEntity> extends Qui
             if (bindCameraItemSuccess(context, position, helper)) {
                 return;
             }
-            final PhotoView view = helper.getView(R.id.photo_picker_iv_image);
-            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            view.setImageURI(new Uri.Builder()
-                    .scheme("res")
-                    .path(String.valueOf(R.drawable.ic_camera_album))
-                    .build());
             helper.getRootView().setBackgroundColor(Color.LTGRAY);
-            helper.setVisibility(R.id.photo_picker_iv_select_icon, false)
-                    .setRootOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (mCallback != null) {
-                                mCallback.onClickItemView(v, position, item);
-                            }
-                        }
-                    });
+            helper.setRootOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCallback != null) {
+                        mCallback.onCameraViewClick(v);
+                    }
+                }
+            });
         } else {
-            final PhotoView view = helper.getView(R.id.photo_picker_iv_image);
+            final DefaultPhotoView view = helper.getView(R.id.photo_picker_iv_image);
             view.setScaleType(ImageView.ScaleType.CENTER_CROP);
             ImageView iv = helper.getView(R.id.photo_picker_iv_select_icon);
             //apply select state
@@ -140,25 +129,22 @@ public abstract class PhotoPickerAdapter<T extends IPhotoFileEntity> extends Qui
 
             //bind image and event
             helper.setImageUrl(R.id.photo_picker_iv_image, item.getPath(), PhotoPickerFactory.getImageLoader())
-                    .setOnClickListener(R.id.photo_picker_iv_select_icon, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (mCallback == null || item.isSelected()) {
-                                getSelectHelper().toogleSelected(position);
-                            } else {
-                                if (!mCallback.shouldIgnoreClickEventOfSelectIcon(position, item, getSelectHelper().getSelectedItems())) {
-                                    getSelectHelper().toogleSelected(position);
-                                    mCallback.onClickSelectIcon(helper.getRootView(), position, item, getSelectHelper().getSelectedItems());
-                                }
-                            }
-                        }
-                    })
-                    .setRootOnClickListener(new View.OnClickListener() {
+                    .setOnClickListener(R.id.photo_picker_iv_image, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (mCallback != null) {
-                                mCallback.onClickItemView(v, position, item);
+                                mCallback.onItemViewClick(v, position, item);
                             }
+                        }
+                    })
+                    .setOnClickListener(R.id.photo_picker_iv_select_icon, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mCallback == null || mCallback.shouldIgnoreSelectViewClick(position, item, getSelectHelper().getSelectedItems())) {
+                                return;
+                            }
+                            getSelectHelper().toggleSelected(position);
+                            mCallback.onSelectViewClick(helper.getRootView(), position, item, getSelectHelper().getSelectedItems());
                         }
                     });
         }
@@ -210,12 +196,12 @@ public abstract class PhotoPickerAdapter<T extends IPhotoFileEntity> extends Qui
         /**
          * called when the user click the camera item view.
          */
-        void onClickCamera(View itemView);
+        void onCameraViewClick(View itemView);
 
         /**
          * called when the user click this whole item view , not the select icon.
          */
-        void onClickItemView(View itemView, int position, T item);
+        void onItemViewClick(View itemView, int position, T item);
 
         /**
          * called when clicked the select icon.
@@ -224,18 +210,18 @@ public abstract class PhotoPickerAdapter<T extends IPhotoFileEntity> extends Qui
          * @param item        the current item.
          * @param selectItems the select items after switch the select state of select icon.
          */
-        void onClickSelectIcon(View itemView, int position, T item, List<T> selectItems);
+        void onSelectViewClick(View itemView, int position, T item, List<T> selectItems);
 
         /**
          * return true if you don't want to switch the select state, that means the click event of select icon is ignored.
          * only be called when user click the unselect item.
-         * but if the target postion's item was selected. the state is auto switch to unselected.
+         * but if the target position's item was selected. the state is auto switch to unselected.
          *
          * @param position    the position
          * @param item        the current item.
          * @param selectItems the select items before this click event of  select icon.
          * @return true to ignore the event
          */
-        boolean shouldIgnoreClickEventOfSelectIcon(int position, T item, List<T> selectItems);
+        boolean shouldIgnoreSelectViewClick(int position, T item, List<T> selectItems);
     }
 }

@@ -1,4 +1,4 @@
-package com.photopicker.library.picker;
+package com.photopicker.library;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,8 +11,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-
-import com.photopicker.library.R;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,14 +40,13 @@ public final class PhotoPickerHelper {
     public final static int REQUEST_CODE_SEE_BIG_PIC = 102;
 
     /**
-     * the index of all photo in the {@link PhotoLoadResultCallback#onResultCallback(List< PhotoDirectoryEntity >)}
+     * the index of all photo in the {@link OnPhotoResultCallback#callback(List< PhotoDirectoryEntity >)}
      */
     public static final int INDEX_ALL_PHOTOS = 0;
     /**
      * the root dir to save the capture image.
      */
-    public static final String ROOT_DIR = Environment.getExternalStorageDirectory().getPath() +
-            File.separator + "Medlinker";
+    public static final String ROOT_DIR = Environment.getExternalStorageDirectory().getPath() + File.separator + "photo_picker";
 
     private static final String[] IMAGE_PROJECTION = {
             MediaStore.Images.Media._ID,
@@ -59,7 +56,7 @@ public final class PhotoPickerHelper {
             MediaStore.Images.Media.DATE_ADDED
     };
 
-    private final ImageCaptureManager mCaptureManager;
+    private final PhotoCaptureManager mCaptureManager;
 
 
     /**
@@ -67,18 +64,18 @@ public final class PhotoPickerHelper {
      *
      * @param <T>
      */
-    public interface PhotoLoadResultCallback<T extends IPhotoFileEntity> {
+    public interface OnPhotoResultCallback<T extends IPhoto> {
         /**
          * called on load finished.
          *
-         * @param directories the all photo dirs , every dir contains some photoes/images.
+         * @param directoryList the all photo dirs , every dir contains some photoes/images.
          *                    and the index = 0 of list is the whole dir contains all photoes.
          */
-        void onResultCallback(List<PhotoDirectoryEntity<T>> directories);
+        void callback(List<PhotoDirectoryEntity<T>> directoryList);
     }
 
     /*public*/ PhotoPickerHelper(Activity context) {
-        this.mCaptureManager = new ImageCaptureManager(context);
+        this.mCaptureManager = new PhotoCaptureManager(context);
     }
 
     /**
@@ -88,7 +85,7 @@ public final class PhotoPickerHelper {
      * @throws IOException if create temp image file failed.
      */
     public Intent makeTakePhotoIntent() throws IOException {
-        return mCaptureManager.makeTakePhotoIntent(ROOT_DIR);
+        return mCaptureManager.createTakePhotoIntent(ROOT_DIR);
     }
 
     /**
@@ -97,18 +94,18 @@ public final class PhotoPickerHelper {
      * @return the absolute path of take photo
      */
     public String getCurrentPhotoPath() {
-        return mCaptureManager.getCurrentPhotoPath();
+        return mCaptureManager.getPhotoPath();
     }
 
     public void setPhotoPath(String image) {
-        mCaptureManager.mCurrentPhotoPath = image;
+        mCaptureManager.setPhotoPath(image);
     }
 
     /**
      * scan the photo file to the local media database which is saved by take photo.
      */
     public void scanFileToDatabase() {
-        mCaptureManager.scanFileToDatabase();
+        mCaptureManager.scanPhoto();
     }
 
 
@@ -117,7 +114,7 @@ public final class PhotoPickerHelper {
      *
      * @param resultCallback the callback
      */
-    public <T extends IPhotoFileEntity> void scanPhotoes(PhotoLoadResultCallback<T> resultCallback) {
+    public <T extends IPhoto> void scanPhotoes(OnPhotoResultCallback<T> resultCallback) {
         Context context = mCaptureManager.getContext();
         if (context instanceof FragmentActivity) {
             ((FragmentActivity) context).getSupportLoaderManager().initLoader(0, null,
@@ -131,11 +128,11 @@ public final class PhotoPickerHelper {
     /**
      * an abstract class for loader callback
      */
-    public static class AbsLoaderCallbacks<T extends IPhotoFileEntity> {
+    public static class AbsLoaderCallbacks<T extends IPhoto> {
         private final Context context;
-        private final PhotoLoadResultCallback<T> resultCallback;
+        private final OnPhotoResultCallback<T> resultCallback;
 
-        public AbsLoaderCallbacks(Context context, PhotoLoadResultCallback<T> resultCallback) {
+        public AbsLoaderCallbacks(Context context, OnPhotoResultCallback<T> resultCallback) {
             this.context = context;
             this.resultCallback = resultCallback;
         }
@@ -144,7 +141,7 @@ public final class PhotoPickerHelper {
             return context;
         }
 
-        public PhotoLoadResultCallback<T> getResultCallback() {
+        public OnPhotoResultCallback<T> getResultCallback() {
             return resultCallback;
         }
 
@@ -202,16 +199,16 @@ public final class PhotoPickerHelper {
             }
             dirs.add(INDEX_ALL_PHOTOS, allPhotoesDir);
             if (getResultCallback() != null) {
-                getResultCallback().onResultCallback(dirs);
+                getResultCallback().callback(dirs);
             }
         }
 
     }
 
-    private static class PhotoDirLoaderCallbacks2<T extends IPhotoFileEntity> extends AbsLoaderCallbacks<T>
+    private static class PhotoDirLoaderCallbacks2<T extends IPhoto> extends AbsLoaderCallbacks<T>
             implements android.app.LoaderManager.LoaderCallbacks<Cursor> {
 
-        public PhotoDirLoaderCallbacks2(Context context, PhotoLoadResultCallback<T> resultCallback) {
+        public PhotoDirLoaderCallbacks2(Context context, OnPhotoResultCallback<T> resultCallback) {
             super(context, resultCallback);
         }
 
@@ -231,10 +228,10 @@ public final class PhotoPickerHelper {
         }
     }
 
-    private static class PhotoDirLoaderCallbacks<T extends IPhotoFileEntity> extends AbsLoaderCallbacks<T>
+    private static class PhotoDirLoaderCallbacks<T extends IPhoto> extends AbsLoaderCallbacks<T>
             implements LoaderManager.LoaderCallbacks<Cursor> {
 
-        public PhotoDirLoaderCallbacks(Context context, PhotoLoadResultCallback<T> resultCallback) {
+        public PhotoDirLoaderCallbacks(Context context, OnPhotoResultCallback<T> resultCallback) {
             super(context, resultCallback);
         }
 

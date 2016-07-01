@@ -5,7 +5,7 @@
              android:layout_height="wrap_content"
              android:padding="30dp">
 
-    <com.photopicker.library.view.PhotoView
+    <com.photopicker.library.view.DefaultPhotoView
         android:id="@id/photo_picker_iv_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,9 +14,9 @@
         fresco:actualImageScaleType="focusCrop"
         fresco:backgroundImage="@drawable/album_photo_bg"
         fresco:fadeDuration="300"
-        fresco:failureImage="@mipmap/ic_broken_image_black"
+        fresco:failureImage="@mipmap/ic_camera_album"
         fresco:failureImageScaleType="centerCrop"
-        fresco:placeholderImage="@mipmap/ic_photo_black"
+        fresco:placeholderImage="@mipmap/ic_camera_album"
         fresco:placeholderImageScaleType="centerCrop"/>
 
     <ImageView
@@ -26,5 +26,6 @@
         android:layout_gravity="right|top"
         android:layout_margin="5dp"
         android:contentDescription="@null"
-        android:padding="5dp"/>
+        android:padding="5dp"
+        android:visibility="gone"/>
 </FrameLayout>

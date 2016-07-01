@@ -1,4 +1,4 @@
-package com.photopicker.library.picker;
+package com.photopicker.library;
 
 import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;

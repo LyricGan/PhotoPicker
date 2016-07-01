@@ -1,4 +1,4 @@
-package com.photopicker.library.picker;
+package com.photopicker.library;
 
 import android.view.View;
 
@@ -7,16 +7,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class AdapterManager<T extends ISelectable> implements SelectHelper.Callback<T> {
+public class AdapterManager<T extends Selectable> implements SelectHelper.Callback<T> {
     private final IAdapterManagerCallback2 mCallback2;
     private final SelectHelper<T> mSelectHelper;
     private List<T> mDatas;
     private ArrayList<IPostRunnableCallback<T>> mPostCallbacks;
 
     /**
-     * @param selectMode see {@link ISelectable#SELECT_MODE_MULTI} or {@link ISelectable#SELECT_MODE_MULTI}
+     * @param selectMode see {@link SelectMode#MULTIPLE} or {@link SelectMode#MULTIPLE}
      */
-    AdapterManager(List<T> data, int selectMode, IAdapterManagerCallback2 callback2) {
+    AdapterManager(List<T> data, SelectMode selectMode, IAdapterManagerCallback2 callback2) {
         this.mDatas = data == null ? new ArrayList<T>() : new ArrayList<T>(data);
         mSelectHelper = new SelectHelper<T>(selectMode, this);
         mSelectHelper.initSelectPositions(data);
@@ -72,14 +72,17 @@ public class AdapterManager<T extends ISelectable> implements SelectHelper.Callb
         }
     }
     //============================================
-
-    public void addItem(T item) {
-        mDatas.add(item);
+    public void addItem(T item, int position) {
+        mDatas.add(position, item);
         if (isRecyclable()) {
             notifyItemInserted(mDatas.size() - 1 + getHeaderSize());
         } else {
             notifyDataSetChanged();
         }
+    }
+
+    public void addItem(T item) {
+        addItem(item, mDatas.size());
     }
 
     public void addItems(T... items) {
@@ -172,8 +175,6 @@ public class AdapterManager<T extends ISelectable> implements SelectHelper.Callb
         mCallback2.notifyDataSetChanged();
         mCallback2.afterNotifyDataChanged();
     }
-
-    // =========== begin recycleview ==============//
 
     private void checkIfSupport() {
         if (!isRecyclable()) {
@@ -272,7 +273,7 @@ public class AdapterManager<T extends ISelectable> implements SelectHelper.Callb
         int getFooterSize();
     }
 
-    public interface IAdapterManagerCallback<T extends ISelectable> {
+    public interface IAdapterManagerCallback<T extends Selectable> {
 
         AdapterManager<T> getAdapterManager();
     }
@@ -283,7 +284,7 @@ public class AdapterManager<T extends ISelectable> implements SelectHelper.Callb
      *
      * @param <T>
      */
-    public interface IPostRunnableCallback<T extends ISelectable> {
+    public interface IPostRunnableCallback<T extends Selectable> {
 
         /**
          * called in every position's bind data.
