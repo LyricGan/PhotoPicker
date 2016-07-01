@@ -21,9 +21,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile rootProject.ext.dependencies.jUnit
-    compile rootProject.ext.dependencies.appCompat
+    compile project(':photopicker')
     compile rootProject.ext.dependencies.design
-    compile rootProject.ext.dependencies.fresco
-    compile project(':library')
 }

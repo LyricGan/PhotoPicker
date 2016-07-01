@@ -110,7 +110,7 @@ public class ViewHelperImpl {
     }
 
     public ViewHelperImpl setBackgroundDrawable(Drawable d) {
-        ViewCompatUtil.setBackgroundCompatible(v, d);
+        ViewCompatUtils.setBackgroundCompatible(v, d);
         return this;
     }
 
@@ -153,7 +153,7 @@ public class ViewHelperImpl {
     }
 
     public ViewHelperImpl setAlpha(float alpha) {
-        ViewCompatUtil.setAlpha(v, alpha);
+        ViewCompatUtils.setAlpha(v, alpha);
         return this;
     }
 

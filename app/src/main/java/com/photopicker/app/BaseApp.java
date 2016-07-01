@@ -1,4 +1,4 @@
-package com.photopicker.app.base;
+package com.photopicker.app;
 
 import android.app.Application;
 import android.os.Environment;
@@ -9,8 +9,8 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 
 import java.io.File;
 
-public class BaseApplication extends Application {
-    private static BaseApplication mContext;
+public class BaseApp extends Application {
+    private static BaseApp mContext;
 
     @Override
     public void onCreate() {
@@ -33,7 +33,7 @@ public class BaseApplication extends Application {
         Fresco.initialize(this, imagePipelineConfig);
     }
 
-    public static BaseApplication getContext() {
+    public static BaseApp getContext() {
         return mContext;
     }
 }

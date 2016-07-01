@@ -6,7 +6,7 @@ import android.os.Build;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 
-public class ViewCompatUtil {
+public class ViewCompatUtils {
 
     @SuppressWarnings("deprecation")
     @SuppressLint("NewApi")
