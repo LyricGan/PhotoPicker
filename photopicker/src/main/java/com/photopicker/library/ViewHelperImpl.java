@@ -6,11 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextWatcher;
 import android.text.util.Linkify;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Checkable;
@@ -21,7 +23,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class ViewHelperImpl {
-    private View v;
+    private View view;
 
     /**
      * create an instance of {@link ViewHelperImpl}
@@ -29,7 +31,7 @@ public class ViewHelperImpl {
      * @param target the target to view
      */
     public ViewHelperImpl(View target) {
-        this.v = target;
+        this.view = target;
     }
 
     public ViewHelperImpl() {
@@ -41,7 +43,7 @@ public class ViewHelperImpl {
     public ViewHelperImpl view(View target) {
         if (target == null)
             throw new NullPointerException("target view can;t be null!");
-        this.v = target;
+        this.view = target;
         return this;
     }
 
@@ -56,36 +58,36 @@ public class ViewHelperImpl {
     }
 
     public Context getContext() {
-        return v.getContext();
+        return view.getContext();
     }
 
     public ViewHelperImpl addTextChangedListener(TextWatcher watcher) {
-        ((TextView) v).addTextChangedListener(watcher);
+        ((TextView) view).addTextChangedListener(watcher);
         return this;
     }
 
     public ViewHelperImpl setVisibility(boolean visible) {
-        v.setVisibility(visible ? View.VISIBLE : View.GONE);
+        view.setVisibility(visible ? View.VISIBLE : View.GONE);
         return this;
     }
 
     public ViewHelperImpl setVisibility(int visibility) {
-        v.setVisibility(visibility);
+        view.setVisibility(visibility);
         return this;
     }
 
     public ViewHelperImpl setText(CharSequence text) {
-        ((TextView) v).setText(text);
+        ((TextView) view).setText(text);
         return this;
     }
 
     public ViewHelperImpl setEnabled(boolean enable) {
-        v.setEnabled(enable);
+        view.setEnabled(enable);
         return this;
     }
 
     public ViewHelperImpl toogleVisibility() {
-        View view = this.v;
+        View view = this.view;
         if (view.getVisibility() == View.VISIBLE) {
             view.setVisibility(View.GONE);
         } else {
@@ -95,37 +97,41 @@ public class ViewHelperImpl {
     }
 
     public ViewHelperImpl setImageResource(int imageResId) {
-        ((ImageView) v).setImageResource(imageResId);
+        ((ImageView) view).setImageResource(imageResId);
         return this;
     }
 
     public ViewHelperImpl setBackgroundColor(int color) {
-        v.setBackgroundColor(color);
+        view.setBackgroundColor(color);
         return this;
     }
 
     public ViewHelperImpl setBackgroundRes(int backgroundRes) {
-        v.setBackgroundResource(backgroundRes);
+        view.setBackgroundResource(backgroundRes);
         return this;
     }
 
     public ViewHelperImpl setBackgroundDrawable(Drawable d) {
-        ViewCompatUtils.setBackgroundCompatible(v, d);
+        if (Build.VERSION.SDK_INT >= 16) {
+            view.setBackground(d);
+        } else {
+            view.setBackgroundDrawable(d);
+        }
         return this;
     }
 
     public ViewHelperImpl setTextAppearance(int redId) {
-        ((TextView) v).setTextAppearance(v.getContext(), redId);
+        ((TextView) view).setTextAppearance(view.getContext(), redId);
         return this;
     }
 
     public ViewHelperImpl setTextColor(int textColor) {
-        ((TextView) v).setTextColor(textColor);
+        ((TextView) view).setTextColor(textColor);
         return this;
     }
 
     public ViewHelperImpl setTextColor(ColorStateList colorList) {
-        ((TextView) v).setTextColor(colorList);
+        ((TextView) view).setTextColor(colorList);
         return this;
     }
 
@@ -138,27 +144,34 @@ public class ViewHelperImpl {
     }
 
     public ViewHelperImpl setImageDrawable(Drawable d) {
-        ((ImageView) v).setImageDrawable(d);
+        ((ImageView) view).setImageDrawable(d);
         return this;
     }
 
     public ViewHelperImpl setImageUrl(String url, IImageLoader loader) {
-        loader.load(url, (ImageView) v);
+        loader.load(url, (ImageView) view);
         return this;
     }
 
     public ViewHelperImpl setImageBitmap(Bitmap bitmap) {
-        ((ImageView) v).setImageBitmap(bitmap);
+        ((ImageView) view).setImageBitmap(bitmap);
         return this;
     }
 
-    public ViewHelperImpl setAlpha(float alpha) {
-        ViewCompatUtils.setAlpha(v, alpha);
+    public ViewHelperImpl setAlpha(float value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            view.setAlpha(value);
+        } else {
+            AlphaAnimation alphaAnimation = new AlphaAnimation(value, value);
+            alphaAnimation.setDuration(0);
+            alphaAnimation.setFillAfter(true);
+            view.startAnimation(alphaAnimation);
+        }
         return this;
     }
 
     public ViewHelperImpl linkify() {
-        Linkify.addLinks((TextView) v, Linkify.ALL);
+        Linkify.addLinks((TextView) view, Linkify.ALL);
         return this;
     }
 
@@ -166,101 +179,101 @@ public class ViewHelperImpl {
      * @see Linkify#addLinks(TextView, int)
      */
     public ViewHelperImpl linkify(int mask) {
-        Linkify.addLinks((TextView) v, mask);
+        Linkify.addLinks((TextView) view, mask);
         return this;
     }
 
     public ViewHelperImpl setTypeface(Typeface typeface) {
-        TextView view = (TextView) this.v;
+        TextView view = (TextView) this.view;
         view.setTypeface(typeface);
         view.setPaintFlags(view.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
         return this;
     }
 
     public ViewHelperImpl setProgress(int progress) {
-        ((ProgressBar) v).setProgress(progress);
+        ((ProgressBar) view).setProgress(progress);
         return this;
     }
 
     public ViewHelperImpl setProgress(int progress, int max) {
-        ((ProgressBar) v).setProgress(progress);
-        ((ProgressBar) v).setMax(max);
+        ((ProgressBar) view).setProgress(progress);
+        ((ProgressBar) view).setMax(max);
         return this;
     }
 
     public ViewHelperImpl setProgressMax(int max) {
-        ((ProgressBar) v).setMax(max);
+        ((ProgressBar) view).setMax(max);
         return this;
     }
 
     public ViewHelperImpl setRating(float rating) {
-        ((RatingBar) v).setRating(rating);
+        ((RatingBar) view).setRating(rating);
         return this;
     }
 
     public ViewHelperImpl setRating(float rating, int max) {
-        ((RatingBar) v).setRating(rating);
-        ((RatingBar) v).setMax(max);
+        ((RatingBar) view).setRating(rating);
+        ((RatingBar) view).setMax(max);
         return this;
     }
 
     public ViewHelperImpl setTag(Object tag) {
-        v.setTag(tag);
+        view.setTag(tag);
         return this;
     }
 
     public ViewHelperImpl setTag(int key, Object tag) {
-        v.setTag(key, tag);
+        view.setTag(key, tag);
         return this;
     }
 
     public ViewHelperImpl setChecked(boolean checked) {
-        ((Checkable) v).setChecked(checked);
+        ((Checkable) view).setChecked(checked);
         return this;
     }
 
     public ViewHelperImpl setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener l) {
-        ((CompoundButton) v).setOnCheckedChangeListener(l);
+        ((CompoundButton) view).setOnCheckedChangeListener(l);
         return this;
     }
 
     public ViewHelperImpl setOnClickListener(View.OnClickListener l) {
-        v.setOnClickListener(l);
+        view.setOnClickListener(l);
         return this;
     }
 
     public ViewHelperImpl setOnLongClickListener(View.OnLongClickListener l) {
-        v.setOnLongClickListener(l);
+        view.setOnLongClickListener(l);
         return this;
     }
 
     public ViewHelperImpl setOnTouchListener(View.OnTouchListener l) {
-        v.setOnTouchListener(l);
+        view.setOnTouchListener(l);
         return this;
     }
 
     public ViewHelperImpl setAdapter(Adapter adapter) {
-        ((AdapterView) v).setAdapter(adapter);
+        ((AdapterView) view).setAdapter(adapter);
         return this;
     }
 
     public ViewHelperImpl setRecyclerAdapter(RecyclerView.Adapter adapter) {
-        ((RecyclerView) v).setAdapter(adapter);
+        ((RecyclerView) view).setAdapter(adapter);
         return this;
     }
 
     public ViewHelperImpl setEnable(boolean enable) {
-        v.setEnabled(enable);
+        view.setEnabled(enable);
         return this;
     }
 
     public ViewHelperImpl setTextSizeDp(float size) {
-        ((TextView) v).setTextSize(size);
+        ((TextView) view).setTextSize(size);
         return this;
     }
 
     public ViewHelperImpl setTextSize(float size) {
-        ((TextView) v).setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+        ((TextView) view).setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
         return this;
     }
 }
