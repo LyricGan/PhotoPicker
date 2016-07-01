@@ -39,9 +39,15 @@ public class PhotoPagerActivity extends Activity {
                 finish();
             }
         });
+        iv_selected.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
-    protected void initialize() {
+    private void initialize() {
         mPhotoList = getIntent().getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOES);
         mSelectPhotoList = getIntent().getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOES_SELECTED);
         mSelectIndex = getIntent().getIntExtra(PhotoPickerHelper.KEY_SELECT_INDEX, 0);
@@ -64,11 +70,7 @@ public class PhotoPagerActivity extends Activity {
             @Override
             public void onPageSelected(int position) {
                 mSelectIndex = position;
-                if (mSelectPhotoList != null && mSelectPhotoList.contains(mPhotoList.get(position))) {
-                    iv_selected.setImageResource(R.mipmap.pic_check_select);
-                } else {
-                    iv_selected.setImageResource(R.mipmap.pic_check_normal);
-                }
+                update(mSelectIndex);
             }
 
             @Override
@@ -76,5 +78,13 @@ public class PhotoPagerActivity extends Activity {
             }
         });
         vp_photos.setCurrentItem(mSelectIndex);
+    }
+
+    private void update(int position) {
+        if (mSelectPhotoList != null && mSelectPhotoList.contains(mPhotoList.get(position))) {
+            iv_selected.setImageResource(R.mipmap.pic_check_select);
+        } else {
+            iv_selected.setImageResource(R.mipmap.pic_check_normal);
+        }
     }
 }

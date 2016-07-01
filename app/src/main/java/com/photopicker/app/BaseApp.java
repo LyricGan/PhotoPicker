@@ -22,7 +22,7 @@ public class BaseApp extends Application {
 
     private void initialize() {
         DiskCacheConfig diskCacheConfig = DiskCacheConfig.newBuilder(this)
-                .setBaseDirectoryPath(new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), "Locale Pictures"))
+                .setBaseDirectoryPath(new File(Environment.getExternalStorageDirectory().getAbsoluteFile(), "just_pictures"))
                 .setBaseDirectoryName("fresco")
                 .setMaxCacheSize(Runtime.getRuntime().maxMemory() / 8)
                 .build();

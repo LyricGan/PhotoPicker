@@ -71,7 +71,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
         } else {
-            mPickerHelper.scanPhotoes(this);
+            mPickerHelper.scanPhotoList(this);
         }
     }
 
@@ -143,7 +143,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
                 mPickerHelper.scanFileToDatabase();
                 // setting -> 开发者选项-》用户离开后即销毁每个活动。会造成当前的activity销毁。然后还没扫描完成就走 onActivityResult
                 if (mPhotoDirectoryList == null) {
-                    mPickerHelper.scanPhotoes(this);
+                    mPickerHelper.scanPhotoList(this);
                     return;
                 }
                 String path = mPickerHelper.getCurrentPhotoPath();
@@ -205,7 +205,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            mPickerHelper.scanPhotoes(this);
+            mPickerHelper.scanPhotoList(this);
         }
     }
 

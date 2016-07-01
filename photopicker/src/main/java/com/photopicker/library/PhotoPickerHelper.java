@@ -33,12 +33,10 @@ public final class PhotoPickerHelper {
      * the request code for take photo
      */
     public static final int REQUEST_TAKE_PHOTO = 101;
-
     /**
      * the request code for big picture
      */
     public final static int REQUEST_CODE_SEE_BIG_PIC = 102;
-
     /**
      * the index of all photo in the {@link OnPhotoResultCallback#callback(List< PhotoDirectoryEntity >)}
      */
@@ -55,7 +53,6 @@ public final class PhotoPickerHelper {
             MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
             MediaStore.Images.Media.DATE_ADDED
     };
-
     private final PhotoCaptureManager mCaptureManager;
 
 
@@ -74,8 +71,8 @@ public final class PhotoPickerHelper {
         void callback(List<PhotoDirectoryEntity<T>> directoryList);
     }
 
-    /*public*/ PhotoPickerHelper(Activity context) {
-        this.mCaptureManager = new PhotoCaptureManager(context);
+    PhotoPickerHelper(Activity activity) {
+        this.mCaptureManager = new PhotoCaptureManager(activity);
     }
 
     /**
@@ -114,14 +111,12 @@ public final class PhotoPickerHelper {
      *
      * @param resultCallback the callback
      */
-    public <T extends IPhoto> void scanPhotoes(OnPhotoResultCallback<T> resultCallback) {
+    public <T extends IPhoto> void scanPhotoList(OnPhotoResultCallback<T> resultCallback) {
         Context context = mCaptureManager.getContext();
         if (context instanceof FragmentActivity) {
-            ((FragmentActivity) context).getSupportLoaderManager().initLoader(0, null,
-                    new PhotoDirLoaderCallbacks<T>(context, resultCallback));
+            ((FragmentActivity) context).getSupportLoaderManager().initLoader(0, null, new PhotoDirLoaderCallbacks<>(context, resultCallback));
         } else {
-            ((Activity) context).getLoaderManager().initLoader(0, null,
-                    new PhotoDirLoaderCallbacks2<T>(context, resultCallback));
+            ((Activity) context).getLoaderManager().initLoader(0, null, new PhotoDirLoaderCallbacks2<>(context, resultCallback));
         }
     }
 
@@ -146,12 +141,12 @@ public final class PhotoPickerHelper {
         }
 
         /**
-         * set up the directiry of the all photo's. default return false.
+         * set up the directory of the all photo's. default return false.
          *
-         * @param allPhotoesDir the directiry of the all photo's
+         * @param allPhotoDirectoryList the directory of the all photo's
          * @return true if you set up it.otherwise return false.
          */
-        protected boolean setUpAllPhotoedDirectory(PhotoDirectoryEntity<T> allPhotoesDir) {
+        protected boolean setUpAllPhotoedDirectory(PhotoDirectoryEntity<T> allPhotoDirectoryList) {
             return false;
         }
 
@@ -159,50 +154,45 @@ public final class PhotoPickerHelper {
             if (data == null) return;
             List<PhotoDirectoryEntity<T>> dirs = new ArrayList<>();
             //all photo with directory
-            PhotoDirectoryEntity<T> allPhotoesDir = new PhotoDirectoryEntity<>();
-            if (!setUpAllPhotoedDirectory(allPhotoesDir)) {
-                allPhotoesDir.setName(getContext().getString(R.string.all_image));
-                allPhotoesDir.setId("ALL");
+            PhotoDirectoryEntity<T> allPhotoDirectoryList = new PhotoDirectoryEntity<>();
+            if (!setUpAllPhotoedDirectory(allPhotoDirectoryList)) {
+                allPhotoDirectoryList.setName("all");
+                allPhotoDirectoryList.setId("all");
             }
-
             int imageId;
             String bucketId;
             String name;
             String path;
 
-            PhotoDirectoryEntity<T> dir;
+            PhotoDirectoryEntity<T> photoDirectory;
             int index;  //index of dir
             while (data.moveToNext()) {
-
                 imageId = data.getInt(data.getColumnIndexOrThrow(_ID));
                 bucketId = data.getString(data.getColumnIndexOrThrow(BUCKET_ID));
                 name = data.getString(data.getColumnIndexOrThrow(BUCKET_DISPLAY_NAME));
                 path = data.getString(data.getColumnIndexOrThrow(DATA));
 
-                dir = new PhotoDirectoryEntity<>();
-                dir.setId(bucketId);
-                dir.setName(name);
-
-                if ((index = dirs.indexOf(dir)) == -1) {
-                    dir.setPath(path);
-                    dir.addPhoto(imageId, path);
-                    dir.setDate(data.getLong(data.getColumnIndexOrThrow(DATE_ADDED)));
-                    dirs.add(dir);
+                photoDirectory = new PhotoDirectoryEntity<>();
+                photoDirectory.setId(bucketId);
+                photoDirectory.setName(name);
+                if ((index = dirs.indexOf(photoDirectory)) == -1) {
+                    photoDirectory.setPath(path);
+                    photoDirectory.addPhoto(imageId, path);
+                    photoDirectory.setDate(data.getLong(data.getColumnIndexOrThrow(DATE_ADDED)));
+                    dirs.add(photoDirectory);
                 } else {
                     dirs.get(index).addPhoto(imageId, path);
                 }
-                allPhotoesDir.addPhoto(imageId, path);
+                allPhotoDirectoryList.addPhoto(imageId, path);
             }
-
-            if (allPhotoesDir.getPhotoPaths().size() > 0) {
-                allPhotoesDir.setPath((String) allPhotoesDir.getPhotoPaths().get(0));
+            if (allPhotoDirectoryList.getPhotoPaths().size() > 0) {
+                allPhotoDirectoryList.setPath(allPhotoDirectoryList.getPhotoPaths().get(0));
             }
-            dirs.add(INDEX_ALL_PHOTOS, allPhotoesDir);
+            dirs.add(INDEX_ALL_PHOTOS, allPhotoDirectoryList);
             if (getResultCallback() != null) {
                 getResultCallback().callback(dirs);
             }
         }
-
     }
 
     private static class PhotoDirLoaderCallbacks2<T extends IPhoto> extends AbsLoaderCallbacks<T>
@@ -255,11 +245,9 @@ public final class PhotoPickerHelper {
 
         public PhotoDirectoryLoader2(Context context) {
             super(context);
-
             setProjection(IMAGE_PROJECTION);
             setUri(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             setSortOrder(MediaStore.Images.Media.DATE_ADDED + " DESC");
-
             setSelection(MIME_TYPE + "=? or " + MIME_TYPE + "=? ");
 
             String[] selectionArgs;
@@ -272,11 +260,9 @@ public final class PhotoPickerHelper {
 
         public PhotoDirectoryLoader(Context context) {
             super(context);
-
             setProjection(IMAGE_PROJECTION);
             setUri(MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             setSortOrder(MediaStore.Images.Media.DATE_ADDED + " DESC");
-
             setSelection(MIME_TYPE + "=? or " + MIME_TYPE + "=? ");
 
             String[] selectionArgs;

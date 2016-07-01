@@ -24,7 +24,7 @@ public class PhotoCaptureManager {
     }
 
     public Context getContext() {
-        return this.mContext;
+        return mContext;
     }
 
     public Intent createTakePhotoIntent(String dir) throws IOException {
