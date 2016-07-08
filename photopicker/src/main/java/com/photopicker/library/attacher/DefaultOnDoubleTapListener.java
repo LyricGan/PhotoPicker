@@ -1,11 +1,10 @@
-package com.photopicker.library.view;
+package com.photopicker.library.attacher;
 
 import android.graphics.RectF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.view.DraweeView;
+import com.photopicker.library.view.ImageDraweeView;
 
 public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapListener {
     private Attacher mAttacher;
@@ -14,17 +13,22 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
         setPhotoDraweeViewAttacher(attacher);
     }
 
+    public void setPhotoDraweeViewAttacher(Attacher attacher) {
+        this.mAttacher = attacher;
+    }
+
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         if (mAttacher == null) {
             return false;
         }
-        DraweeView<GenericDraweeHierarchy> draweeView = mAttacher.getDraweeView();
+        ImageDraweeView draweeView = mAttacher.getDraweeView();
         if (draweeView == null) {
             return false;
         }
         if (mAttacher.getOnPhotoTapListener() != null) {
             final RectF displayRect = mAttacher.getDisplayRect();
+
             if (null != displayRect) {
                 final float x = e.getX(), y = e.getY();
                 if (displayRect.contains(x, y)) {
@@ -35,7 +39,6 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
                 }
             }
         }
-
         if (mAttacher.getOnViewTapListener() != null) {
             mAttacher.getOnViewTapListener().onViewTap(draweeView, e.getX(), e.getY());
             return true;
@@ -48,7 +51,6 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
         if (mAttacher == null) {
             return false;
         }
-
         try {
             float scale = mAttacher.getScale();
             float x = event.getX();
@@ -70,9 +72,5 @@ public class DefaultOnDoubleTapListener implements GestureDetector.OnDoubleTapLi
     @Override
     public boolean onDoubleTapEvent(MotionEvent event) {
         return false;
-    }
-
-    public void setPhotoDraweeViewAttacher(Attacher attacher) {
-        mAttacher = attacher;
     }
 }

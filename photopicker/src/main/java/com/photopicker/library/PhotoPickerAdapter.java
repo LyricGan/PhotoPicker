@@ -9,7 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.photopicker.library.view.DefaultPhotoView;
+import com.photopicker.library.view.ImageDraweeView;
+import com.photopicker.library.view.ImageScaleType;
 
 import java.util.List;
 
@@ -121,8 +122,8 @@ public abstract class PhotoPickerAdapter<T extends IPhoto> extends QuickRecycleV
                 }
             });
         } else {
-            final DefaultPhotoView view = helper.getView(R.id.photo_picker_iv_image);
-            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            final ImageDraweeView view = helper.getView(R.id.photo_picker_iv_image);
+            view.setImageScaleType(ImageScaleType.CENTER_CROP);
             ImageView iv = helper.getView(R.id.photo_picker_iv_select_icon);
             //apply select state
             applySelectState(iv, item.isSelected());

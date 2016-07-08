@@ -2,6 +2,8 @@ package com.photopicker.library;
 
 import android.app.Activity;
 
+import com.photopicker.library.view.ImageHelper;
+
 public final class PhotoPickerFactory {
     private static IPhotoFileEntityFactory sPhotoFactory;
     private static IImageLoader sImageLoader;
@@ -69,5 +71,9 @@ public final class PhotoPickerFactory {
             return new DefaultImageLoader(0);
         }
         return sImageLoader;
+    }
+
+    public static ImageHelper getImageHelper() {
+        return ImageHelper.getInstance();
     }
 }

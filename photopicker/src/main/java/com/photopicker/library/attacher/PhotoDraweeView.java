@@ -1,4 +1,4 @@
-package com.photopicker.library.view;
+package com.photopicker.library.attacher;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeControllerBuilder;
@@ -17,28 +18,23 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.imagepipeline.image.ImageInfo;
 import com.facebook.imagepipeline.request.ImageRequest;
+import com.photopicker.library.view.ImageDraweeView;
 
 import java.io.File;
 
-public class PhotoView extends DefaultPhotoView implements IAttacher {
+public class PhotoDraweeView extends ImageDraweeView implements IAttacher {
     private Attacher mAttacher;
 
-    public PhotoView(Context context) {
+    public PhotoDraweeView(Context context) {
         this(context, null);
     }
 
-    public PhotoView(Context context, AttributeSet attrs) {
+    public PhotoDraweeView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public PhotoView(Context context, AttributeSet attrs, int defStyle) {
+    public PhotoDraweeView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initialize();
-    }
-
-    public PhotoView(Context context, GenericDraweeHierarchy hierarchy, Attacher mAttacher) {
-        super(context, hierarchy);
-        this.mAttacher = mAttacher;
         initialize();
     }
 
@@ -144,7 +140,7 @@ public class PhotoView extends DefaultPhotoView implements IAttacher {
     }
 
     @Override
-    public void setOnLongClickListener(OnLongClickListener listener) {
+    public void setOnLongClickListener(View.OnLongClickListener listener) {
         mAttacher.setOnLongClickListener(listener);
     }
 
@@ -180,9 +176,10 @@ public class PhotoView extends DefaultPhotoView implements IAttacher {
         if (lowUrl != null && lowUrl.startsWith("http")) {
             controller.setLowResImageRequest(ImageRequest.fromUri(lowUrl));
         }
-        getHierarchy().setActualImageScaleType(scaleType);
-        getHierarchy().setPlaceholderImage(ContextCompat.getDrawable(getContext(), placeHolderResId), scaleType);
-        getHierarchy().setFailureImage(ContextCompat.getDrawable(getContext(), errorResId), scaleType);
+        GenericDraweeHierarchy hierarchy = getHierarchy();
+        hierarchy.setActualImageScaleType(scaleType);
+        hierarchy.setPlaceholderImage(ContextCompat.getDrawable(getContext(), placeHolderResId), scaleType);
+        hierarchy.setFailureImage(ContextCompat.getDrawable(getContext(), errorResId), scaleType);
         controller.setOldController(this.getController()).setControllerListener(new BaseControllerListener<ImageInfo>() {
             @Override
             public void onFinalImageSet(String id, ImageInfo imageInfo, Animatable animatable) {

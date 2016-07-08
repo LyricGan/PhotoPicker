@@ -7,12 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.facebook.drawee.drawable.ScalingUtils;
 import com.photopicker.app.R;
 import com.photopicker.library.PhotoEntity;
 import com.photopicker.library.PhotoPagerAdapter;
 import com.photopicker.library.PhotoPickerHelper;
-import com.photopicker.library.view.PhotoView;
+import com.photopicker.library.attacher.PhotoDraweeView;
+import com.photopicker.library.view.ImageScaleType;
 
 import java.util.ArrayList;
 
@@ -55,10 +55,10 @@ public class PhotoPagerActivity extends Activity {
         vp_photos.setAdapter(new PhotoPagerAdapter<PhotoEntity>(mPhotoList) {
             @Override
             protected View onInstantiateItem(ViewGroup container, int position, PhotoEntity item) {
-                PhotoView photoView = new PhotoView(container.getContext());
-                photoView.load(item.getPath(), null, R.mipmap.ic_broken_image_black, R.mipmap.ic_broken_image_black, ScalingUtils.ScaleType.FIT_CENTER);
-                container.addView(photoView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-                return photoView;
+                PhotoDraweeView draweeView = new PhotoDraweeView(container.getContext());
+                draweeView.load(item.getPath(), null, R.mipmap.ic_broken_image_black, R.mipmap.ic_broken_image_black, ImageScaleType.FIT_CENTER);
+                container.addView(draweeView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                return draweeView;
             }
         });
         vp_photos.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

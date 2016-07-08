@@ -1,4 +1,4 @@
-package com.photopicker.library.view;
+package com.photopicker.library.attacher;
 
 import android.content.Context;
 import android.graphics.Matrix;
@@ -15,9 +15,8 @@ import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 
-import com.facebook.drawee.drawable.ScalingUtils;
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
-import com.facebook.drawee.view.DraweeView;
+import com.photopicker.library.view.ImageDraweeView;
+import com.photopicker.library.view.ImageScaleType;
 
 import java.lang.ref.WeakReference;
 
@@ -46,28 +45,27 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     private final Matrix mMatrix = new Matrix();
     private int mImageInfoHeight = -1, mImageInfoWidth = -1;
     private FlingRunnable mCurrentFlingRunnable;
-    private WeakReference<DraweeView<GenericDraweeHierarchy>> mDraweeView;
+    private WeakReference<ImageDraweeView> mDraweeView;
 
     private OnPhotoTapListener mPhotoTapListener;
     private OnViewTapListener mViewTapListener;
     private View.OnLongClickListener mLongClickListener;
     private OnScaleChangeListener mScaleChangeListener;
 
-    public Attacher(DraweeView<GenericDraweeHierarchy> draweeView) {
+    public Attacher(ImageDraweeView draweeView) {
         mDraweeView = new WeakReference<>(draweeView);
-        draweeView.getHierarchy().setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);
+        draweeView.getHierarchy().setActualImageScaleType(ImageScaleType.FIT_CENTER);
         draweeView.setOnTouchListener(this);
         mScaleDragDetector = new ScaleDragDetector(draweeView.getContext(), this);
-        mGestureDetector = new GestureDetectorCompat(draweeView.getContext(),
-                new GestureDetector.SimpleOnGestureListener() {
-                    @Override
-                    public void onLongPress(MotionEvent e) {
-                        super.onLongPress(e);
-                        if (null != mLongClickListener) {
-                            mLongClickListener.onLongClick(getDraweeView());
-                        }
-                    }
-                });
+        mGestureDetector = new GestureDetectorCompat(draweeView.getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public void onLongPress(MotionEvent e) {
+                super.onLongPress(e);
+                if (null != mLongClickListener) {
+                    mLongClickListener.onLongClick(getDraweeView());
+                }
+            }
+        });
         mGestureDetector.setOnDoubleTapListener(new DefaultOnDoubleTapListener(this));
     }
 
@@ -80,7 +78,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     }
 
     @Nullable
-    public DraweeView<GenericDraweeHierarchy> getDraweeView() {
+    public ImageDraweeView getDraweeView() {
         return mDraweeView.get();
     }
 
@@ -133,7 +131,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
 
     @Override
     public void setScale(float scale, boolean animate) {
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView != null) {
             setScale(scale, (draweeView.getRight()) / 2, (draweeView.getBottom()) / 2, false);
         }
@@ -141,12 +139,10 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
 
     @Override
     public void setScale(float scale, float focalX, float focalY, boolean animate) {
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
-
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView == null || scale < mMinScale || scale > mMaxScale) {
             return;
         }
-
         if (animate) {
             draweeView.post(new AnimatedZoomRunnable(getScale(), scale, focalX, focalY));
         } else {
@@ -212,24 +208,18 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     }
 
     private int getViewWidth() {
-
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
-
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView != null) {
-
-            return draweeView.getWidth()
-                    - draweeView.getPaddingLeft()
+            return draweeView.getWidth() - draweeView.getPaddingLeft()
                     - draweeView.getPaddingRight();
         }
-
         return 0;
     }
 
     private int getViewHeight() {
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView != null) {
-            return draweeView.getHeight()
-                    - draweeView.getPaddingTop()
+            return draweeView.getHeight() - draweeView.getPaddingTop()
                     - draweeView.getPaddingBottom();
         }
         return 0;
@@ -250,13 +240,10 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     }
 
     public void checkMatrixAndInvalidate() {
-
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
-
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView == null) {
             return;
         }
-
         if (checkMatrixBounds()) {
             draweeView.invalidate();
         }
@@ -267,7 +254,6 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         if (rect == null) {
             return false;
         }
-
         float height = rect.height();
         float width = rect.width();
         float deltaX = 0.0F;
@@ -294,13 +280,12 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
         } else {
             mScrollEdge = EDGE_NONE;
         }
-
         mMatrix.postTranslate(deltaX, deltaY);
         return true;
     }
 
     private RectF getDisplayRect(Matrix matrix) {
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView == null || (mImageInfoWidth == -1 && mImageInfoHeight == -1)) {
             return null;
         }
@@ -320,18 +305,17 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     private void resetMatrix() {
         mMatrix.reset();
         checkMatrixBounds();
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView != null) {
             draweeView.invalidate();
         }
     }
 
     private void checkMinScale() {
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView == null) {
             return;
         }
-
         if (getScale() < mMinScale) {
             RectF rect = getDisplayRect();
             if (null != rect) {
@@ -344,11 +328,9 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     @Override
     public void onScale(float scaleFactor, float focusX, float focusY) {
         if (getScale() < mMaxScale || scaleFactor < 1.0F) {
-
             if (mScaleChangeListener != null) {
                 mScaleChangeListener.onScaleChange(scaleFactor, focusX, focusY);
             }
-
             mMatrix.postScale(scaleFactor, scaleFactor, focusX, focusY);
             checkMatrixAndInvalidate();
         }
@@ -361,24 +343,18 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
 
     @Override
     public void onDrag(float dx, float dy) {
-
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
-
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView != null && !mScaleDragDetector.isScaling()) {
             mMatrix.postTranslate(dx, dy);
             checkMatrixAndInvalidate();
-
             ViewParent parent = draweeView.getParent();
             if (parent == null) {
                 return;
             }
-
-            if (mAllowParentInterceptOnEdge
-                    && !mScaleDragDetector.isScaling()
+            if (mAllowParentInterceptOnEdge && !mScaleDragDetector.isScaling()
                     && !mBlockParentIntercept) {
                 if (mScrollEdge == EDGE_BOTH || (mScrollEdge == EDGE_LEFT && dx >= 1f) || (
-                        mScrollEdge == EDGE_RIGHT
-                                && dx <= -1f)) {
+                        mScrollEdge == EDGE_RIGHT && dx <= -1f)) {
                     parent.requestDisallowInterceptTouchEvent(false);
                 }
             } else {
@@ -389,14 +365,12 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
 
     @Override
     public void onFling(float startX, float startY, float velocityX, float velocityY) {
-        DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
+        ImageDraweeView draweeView = getDraweeView();
         if (draweeView == null) {
             return;
         }
-
         mCurrentFlingRunnable = new FlingRunnable(draweeView.getContext());
-        mCurrentFlingRunnable.fling(getViewWidth(), getViewHeight(), (int) velocityX,
-                (int) velocityY);
+        mCurrentFlingRunnable.fling(getViewWidth(), getViewHeight(), (int) velocityX, (int) velocityY);
         draweeView.post(mCurrentFlingRunnable);
     }
 
@@ -421,20 +395,15 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             }
             break;
         }
-
         boolean wasScaling = mScaleDragDetector.isScaling();
         boolean wasDragging = mScaleDragDetector.isDragging();
-
         boolean handled = mScaleDragDetector.onTouchEvent(event);
-
         boolean noScale = !wasScaling && !mScaleDragDetector.isScaling();
         boolean noDrag = !wasDragging && !mScaleDragDetector.isDragging();
         mBlockParentIntercept = noScale && noDrag;
-
         if (mGestureDetector.onTouchEvent(event)) {
             handled = true;
         }
-
         return handled;
     }
 
@@ -454,18 +423,14 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
 
         @Override
         public void run() {
-
-            DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
+            ImageDraweeView draweeView = getDraweeView();
             if (draweeView == null) {
                 return;
             }
-
             float t = interpolate();
             float scale = mZoomStart + t * (mZoomEnd - mZoomStart);
             float deltaScale = scale / getScale();
-
             onScale(deltaScale, mFocalX, mFocalY);
-
             if (t < 1f) {
                 postOnAnimation(draweeView, this);
             }
@@ -480,7 +445,6 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
     }
 
     private class FlingRunnable implements Runnable {
-
         private final ScrollerCompat mScroller;
         private int mCurrentX, mCurrentY;
 
@@ -497,17 +461,14 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             if (null == rect) {
                 return;
             }
-
             final int startX = Math.round(-rect.left);
             final int minX, maxX, minY, maxY;
-
             if (viewWidth < rect.width()) {
                 minX = 0;
                 maxX = Math.round(rect.width() - viewWidth);
             } else {
                 minX = maxX = startX;
             }
-
             final int startY = Math.round(-rect.top);
             if (viewHeight < rect.height()) {
                 minY = 0;
@@ -515,10 +476,8 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             } else {
                 minY = maxY = startY;
             }
-
             mCurrentX = startX;
             mCurrentY = startY;
-
             if (startX != maxX || startY != maxY) {
                 mScroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY, 0, 0);
             }
@@ -529,9 +488,7 @@ public class Attacher implements IAttacher, View.OnTouchListener, OnScaleDragGes
             if (mScroller.isFinished()) {
                 return;
             }
-
-            DraweeView<GenericDraweeHierarchy> draweeView = getDraweeView();
-
+            ImageDraweeView draweeView = getDraweeView();
             if (draweeView != null && mScroller.computeScrollOffset()) {
                 final int newX = mScroller.getCurrX();
                 final int newY = mScroller.getCurrY();

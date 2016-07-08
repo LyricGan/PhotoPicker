@@ -1,4 +1,4 @@
-package com.photopicker.library.view;
+package com.photopicker.library.attacher;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
@@ -10,13 +10,13 @@ import android.view.ViewConfiguration;
 /**
  * ****************************************************************************
  * Copyright 2011, 2012 Chris Banes.
- * <p/>
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * <p/>
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p/>
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,7 @@ import android.view.ViewConfiguration;
  */
 public class ScaleDragDetector implements ScaleGestureDetector.OnScaleGestureListener {
     private static final int INVALID_POINTER_ID = -1;
+
     private final float mTouchSlop;
     private final float mMinimumVelocity;
     private final ScaleGestureDetector mScaleDetector;
@@ -119,7 +120,8 @@ public class ScaleDragDetector implements ScaleGestureDetector.OnScaleGestureLis
                 }
                 break;
         }
-        mActivePointerIndex = MotionEventCompat.findPointerIndex(ev, mActivePointerId != INVALID_POINTER_ID ? mActivePointerId : 0);
+        mActivePointerIndex = MotionEventCompat.findPointerIndex(ev,
+                mActivePointerId != INVALID_POINTER_ID ? mActivePointerId : 0);
     }
 
     private void onTouchDragEvent(int action, MotionEvent ev) {
@@ -165,7 +167,9 @@ public class ScaleDragDetector implements ScaleGestureDetector.OnScaleGestureLis
                         mLastTouchY = getActiveY(ev);
                         mVelocityTracker.addMovement(ev);
                         mVelocityTracker.computeCurrentVelocity(1000);
-                        final float vX = mVelocityTracker.getXVelocity(), vY = mVelocityTracker.getYVelocity();
+
+                        final float vX = mVelocityTracker.getXVelocity(), vY =
+                                mVelocityTracker.getYVelocity();
                         if (Math.max(Math.abs(vX), Math.abs(vY)) >= mMinimumVelocity) {
                             mScaleDragGestureListener.onFling(mLastTouchX, mLastTouchY, -vX, -vY);
                         }

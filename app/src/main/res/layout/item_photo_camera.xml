@@ -5,7 +5,7 @@
              android:layout_height="wrap_content"
              android:padding="30dp">
 
-    <com.photopicker.library.view.DefaultPhotoView
+    <com.photopicker.library.view.ImageDraweeView
         android:id="@id/photo_picker_iv_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
