@@ -75,6 +75,6 @@ public class PhotoDirectoryEntity<T extends IPhoto> implements Selectable {
     }
 
     public void addPhoto(int id, String path) {
-        photoList.add((T) PhotoPickerFactory.getPhotoFileEntityFactory().create(id, path));
+        photoList.add((T) PhotoPickerFactory.getPhotoEntityFactory().create(id, path));
     }
 }

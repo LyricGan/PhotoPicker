@@ -13,17 +13,19 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.CompoundButton;
 
+import com.photopicker.library.view.IImageLoader;
+
 public class ViewHelper {
     private final SparseArray<View> mViewMap;
     private final View mRootView;
-    private final ViewHelperImpl mImpl;
+    private final ViewHelperImpl mHelperImpl;
     private LayoutInflater mInflater;
 
     public ViewHelper(View root) {
         this.mRootView = root;
-        mInflater = LayoutInflater.from(root.getContext());
-        mViewMap = new SparseArray<View>();
-        mImpl = new ViewHelperImpl(null);
+        this.mInflater = LayoutInflater.from(root.getContext());
+        this.mViewMap = new SparseArray<View>();
+        this.mHelperImpl = new ViewHelperImpl(null);
     }
 
     public ViewHelper setRootOnClickListener(View.OnClickListener l) {
@@ -372,8 +374,7 @@ public class ViewHelper {
      * @param listener The on click listener;
      * @return The ViewHelper for chaining.
      */
-    public ViewHelper setOnClickListener(int viewId,
-                                         View.OnClickListener listener) {
+    public ViewHelper setOnClickListener(int viewId, View.OnClickListener listener) {
         return view(viewId).setOnClickListener(listener).reverse(this);
     }
 
@@ -410,6 +411,6 @@ public class ViewHelper {
      * @return ViewHelperImpl
      */
     public ViewHelperImpl view(int viewId) {
-        return mImpl.view(getView(viewId));
+        return mHelperImpl.view(getView(viewId));
     }
 }

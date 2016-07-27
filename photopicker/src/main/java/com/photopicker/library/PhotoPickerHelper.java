@@ -25,10 +25,9 @@ import static android.provider.MediaStore.MediaColumns.DATE_ADDED;
 import static android.provider.MediaStore.MediaColumns.MIME_TYPE;
 
 public final class PhotoPickerHelper {
-    public static final String KEY_PHOTOES = "photoes";
-    public static final String KEY_PHOTOES_SELECTED = "photoes_selected";
-    public static final String KEY_SELECT_INDEX = "photo_select_index";
-
+    public static final String KEY_PHOTOS = "key_photos";
+    public static final String KEY_PHOTOS_SELECTED = "key_photos_selected";
+    public static final String KEY_SELECT_INDEX = "key_photo_select_index";
     /**
      * the request code for take photo
      */

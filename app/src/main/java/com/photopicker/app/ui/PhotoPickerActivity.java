@@ -95,9 +95,9 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
             }
             Bundle bundle = new Bundle();
             bundle.putInt(PhotoPickerHelper.KEY_SELECT_INDEX, position);
-            bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES, photoList);
+            bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOS, photoList);
             if (selectItems != null) {
-                bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOES_SELECTED, new ArrayList<>(mPickerAdapter.getSelectHelper().getSelectedItems()));
+                bundle.putParcelableArrayList(PhotoPickerHelper.KEY_PHOTOS_SELECTED, new ArrayList<>(mPickerAdapter.getSelectHelper().getSelectedItems()));
             }
             Intent intent = new Intent(PhotoPickerActivity.this, PhotoPagerActivity.class);
             intent.putExtras(bundle);
@@ -147,7 +147,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
                     return;
                 }
                 String path = mPickerHelper.getCurrentPhotoPath();
-                PhotoEntity entity = (PhotoEntity) PhotoPickerFactory.getPhotoFileEntityFactory().create(path.hashCode(), path);
+                PhotoEntity entity = (PhotoEntity) PhotoPickerFactory.getPhotoEntityFactory().create(path.hashCode(), path);
                 //add to dir
                 final PhotoDirectoryEntity<PhotoEntity> dirs = mPhotoDirectoryList.get(PhotoPickerHelper.INDEX_ALL_PHOTOS);
                 dirs.getPhotoList().add(0, entity);
@@ -168,7 +168,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
     private void finishSelect() {
         Intent sIntent = new Intent();
         List<PhotoEntity> selectedPhotos = mPickerAdapter.getSelectHelper().getSelectedItems();
-        sIntent.putParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOES_SELECTED, (ArrayList<? extends Parcelable>) selectedPhotos);
+        sIntent.putParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOS_SELECTED, (ArrayList<? extends Parcelable>) selectedPhotos);
         setResult(RESULT_OK, sIntent);
         finish();
     }

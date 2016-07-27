@@ -4,8 +4,8 @@ import android.app.Application;
 
 import com.photopicker.library.PhotoPickerFactory;
 
-public class BaseApp extends Application {
-    private static BaseApp mContext;
+public class App extends Application {
+    private static App mContext;
 
     @Override
     public void onCreate() {
@@ -15,7 +15,7 @@ public class BaseApp extends Application {
         PhotoPickerFactory.getImageHelper().initialize(this);
     }
 
-    public static BaseApp getContext() {
+    public static App getContext() {
         return mContext;
     }
 }

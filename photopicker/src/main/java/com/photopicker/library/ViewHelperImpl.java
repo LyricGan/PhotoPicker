@@ -22,8 +22,13 @@ import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-public class ViewHelperImpl {
+import com.photopicker.library.view.IImageLoader;
+
+class ViewHelperImpl {
     private View view;
+
+    public ViewHelperImpl() {
+    }
 
     /**
      * create an instance of {@link ViewHelperImpl}
@@ -32,9 +37,6 @@ public class ViewHelperImpl {
      */
     public ViewHelperImpl(View target) {
         this.view = target;
-    }
-
-    public ViewHelperImpl() {
     }
 
     /**

@@ -2,14 +2,15 @@ package com.photopicker.library;
 
 import android.app.Activity;
 
+import com.photopicker.library.view.DefaultImageLoader;
+import com.photopicker.library.view.IImageLoader;
 import com.photopicker.library.view.ImageHelper;
 
 public final class PhotoPickerFactory {
-    private static IPhotoFileEntityFactory sPhotoFactory;
-    private static IImageLoader sImageLoader;
+    private static IPhotoEntityFactory mPhotoFactory;
+    private static IImageLoader mImageLoader;
 
-    private static final IPhotoFileEntityFactory<PhotoEntity> sDefaultFactory
-            = new IPhotoFileEntityFactory<PhotoEntity>() {
+    private static final IPhotoEntityFactory<PhotoEntity> mDefaultFactory = new IPhotoEntityFactory<PhotoEntity>() {
         @Override
         public PhotoEntity create(int id, String path) {
             return new PhotoEntity(id, path);
@@ -21,7 +22,7 @@ public final class PhotoPickerFactory {
      *
      * @param <T>
      */
-    public interface IPhotoFileEntityFactory<T extends IPhoto> {
+    public interface IPhotoEntityFactory<T extends IPhoto> {
         T create(int id, String path);
     }
 
@@ -39,8 +40,8 @@ public final class PhotoPickerFactory {
      *
      * @param factory the factory
      */
-    public static <T extends IPhoto> void setPhotoFileEntityFactory(IPhotoFileEntityFactory<T> factory) {
-        sPhotoFactory = factory;
+    public static <T extends IPhoto> void setPhotoEntityFactory(IPhotoEntityFactory<T> factory) {
+        mPhotoFactory = factory;
     }
 
     /**
@@ -51,7 +52,7 @@ public final class PhotoPickerFactory {
      * @param imageLoader the image loader
      */
     public static void setImageLoader(IImageLoader imageLoader) {
-        sImageLoader = imageLoader;
+        mImageLoader = imageLoader;
     }
 
     /**
@@ -59,18 +60,18 @@ public final class PhotoPickerFactory {
      *
      * @return photo picker entity factory
      */
-    public static IPhotoFileEntityFactory getPhotoFileEntityFactory() {
-        return sPhotoFactory != null ? sPhotoFactory : sDefaultFactory;
+    public static IPhotoEntityFactory getPhotoEntityFactory() {
+        return mPhotoFactory != null ? mPhotoFactory : mDefaultFactory;
     }
 
     /**
      * get the image loader
      */
     public static IImageLoader getImageLoader() {
-        if (sImageLoader == null) {
+        if (mImageLoader == null) {
             return new DefaultImageLoader(0);
         }
-        return sImageLoader;
+        return mImageLoader;
     }
 
     public static ImageHelper getImageHelper() {

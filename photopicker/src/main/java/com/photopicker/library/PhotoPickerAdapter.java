@@ -38,7 +38,7 @@ public abstract class PhotoPickerAdapter<T extends IPhoto> extends QuickRecycleV
     public PhotoPickerAdapter(int layoutId, List<T> mDatas, SelectMode selectMode) {
         super(layoutId, mDatas, selectMode);
         if (isShowCamera()) {
-            T t = (T) PhotoPickerFactory.getPhotoFileEntityFactory().create(-1, "camera");
+            T t = (T) PhotoPickerFactory.getPhotoEntityFactory().create(-1, "camera");
             getAdapterManager().addItem(t, 0);//add a place holder for show camera
         }
     }

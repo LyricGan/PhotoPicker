@@ -1,4 +1,4 @@
-package com.photopicker.library;
+package com.photopicker.library.view;
 
 import android.widget.ImageView;
 

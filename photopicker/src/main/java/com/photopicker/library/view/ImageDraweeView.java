@@ -133,6 +133,10 @@ public class ImageDraweeView extends SimpleDraweeView {
     }
 
     public void setImageFile(String url, int width, int height) {
+        setImageFile(url, width, height, 0, null);
+    }
+
+    public void setImageFile(String url, int width, int height, int defaultResId, ControllerListener<ImageInfo> listener) {
         ImageRequest request = ImageRequestBuilder
                 .newBuilderWithSource(Uri.fromFile(new File(url)))
                 .setLocalThumbnailPreviewsEnabled(true)
@@ -143,7 +147,11 @@ public class ImageDraweeView extends SimpleDraweeView {
         DraweeController controller = Fresco.newDraweeControllerBuilder()
                 .setImageRequest(request)
                 .setOldController(getController())
+                .setControllerListener(listener)
                 .build();
+        if (defaultResId > 0) {
+            getHierarchy().setPlaceholderImage(defaultResId);
+        }
         this.setController(controller);
     }
 }
