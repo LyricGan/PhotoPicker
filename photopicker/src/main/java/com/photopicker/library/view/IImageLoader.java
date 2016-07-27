@@ -4,5 +4,5 @@ import android.widget.ImageView;
 
 public interface IImageLoader {
 
-    void load(String url, ImageView view);
+    void load(ImageView view, String url);
 }

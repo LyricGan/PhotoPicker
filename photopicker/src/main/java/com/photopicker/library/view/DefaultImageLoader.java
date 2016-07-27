@@ -1,5 +1,6 @@
 package com.photopicker.library.view;
 
+import android.text.TextUtils;
 import android.widget.ImageView;
 
 import com.facebook.drawee.controller.ControllerListener;
@@ -27,15 +28,18 @@ public class DefaultImageLoader implements IImageLoader {
     }
 
     @Override
-    public void load(String url, ImageView imageView) {
+    public void load(ImageView imageView, String url) {
+        if (TextUtils.isEmpty(url)) {
+            return;
+        }
         if (mWidth <=0 || mHeight <= 0) {
             int size = imageView.getContext().getResources().getDimensionPixelSize(R.dimen.photo_size);
             mWidth = size;
             mHeight = size;
         }
         if (imageView instanceof ImageDraweeView) {
-            ImageDraweeView view = (ImageDraweeView) imageView;
-            view.setImageFile(url, mWidth, mHeight, mDefaultResId, mListener);
+            ImageDraweeView draweeView = (ImageDraweeView) imageView;
+            draweeView.setImageUrl(url, mWidth, mHeight, mDefaultResId, mListener);
         }
     }
 }

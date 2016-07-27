@@ -54,7 +54,6 @@ public final class PhotoPickerHelper {
     };
     private final PhotoCaptureManager mCaptureManager;
 
-
     /**
      * the photo async loader callback
      *
@@ -104,9 +103,8 @@ public final class PhotoPickerHelper {
         mCaptureManager.scanPhoto();
     }
 
-
     /**
-     * scan the photoes, this is async.
+     * scan the photos, this is async.
      *
      * @param resultCallback the callback
      */
@@ -164,7 +162,7 @@ public final class PhotoPickerHelper {
             String path;
 
             PhotoDirectoryEntity<T> photoDirectory;
-            int index;  //index of dir
+            int index;// index of dir
             while (data.moveToNext()) {
                 imageId = data.getInt(data.getColumnIndexOrThrow(_ID));
                 bucketId = data.getString(data.getColumnIndexOrThrow(BUCKET_ID));
@@ -213,7 +211,6 @@ public final class PhotoPickerHelper {
 
         @Override
         public void onLoaderReset(android.content.Loader<Cursor> loader) {
-
         }
     }
 
@@ -236,7 +233,6 @@ public final class PhotoPickerHelper {
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
         }
     }
 

@@ -11,10 +11,12 @@ public class HeaderFooterHelper {
     private List<Integer> mLayoutIds;
 
     public void addHeaderView(View v) {
-        if (mHeaders == null)
+        if (mHeaders == null) {
             mHeaders = new ArrayList<>();
-        if (!mHeaders.contains(v))
+        }
+        if (!mHeaders.contains(v)) {
             mHeaders.add(v);
+        }
     }
 
     /***
@@ -30,10 +32,12 @@ public class HeaderFooterHelper {
     }
 
     public void addFooterView(View v) {
-        if (mFooter == null)
+        if (mFooter == null) {
             mFooter = new ArrayList<>();
-        if (!mFooter.contains(v))
+        }
+        if (!mFooter.contains(v)) {
             mFooter.add(v);
+        }
     }
 
     /***
@@ -87,8 +91,9 @@ public class HeaderFooterHelper {
      * record the layout id if need
      */
     public void recordLayoutId(int layoutId) {
-        if (mLayoutIds == null)
+        if (mLayoutIds == null) {
             mLayoutIds = new ArrayList<>();
+        }
         if (!mLayoutIds.contains(layoutId)) {
             mLayoutIds.add(layoutId);
         }
@@ -107,8 +112,9 @@ public class HeaderFooterHelper {
      * @param position the position of adapter,must be header  or footer position of view
      */
     public View findView(int position, int dataSize) {
-        if (isInHeader(position))
+        if (isInHeader(position)) {
             return getHeaderView(position);
+        }
         if (isInFooter(position, dataSize)) {
             int headerSize = getHeaderViewSize();
             // 8 - 2 -  5  =1 means get the second view of footer

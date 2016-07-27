@@ -151,7 +151,7 @@ class ViewHelperImpl {
     }
 
     public ViewHelperImpl setImageUrl(String url, IImageLoader loader) {
-        loader.load(url, (ImageView) view);
+        loader.load((ImageView) view, url);
         return this;
     }
 

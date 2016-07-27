@@ -132,13 +132,13 @@ public class ImageDraweeView extends SimpleDraweeView {
         setImageURI(uri);
     }
 
-    public void setImageFile(String url, int width, int height) {
-        setImageFile(url, width, height, 0, null);
+    public void setImageUrl(String url, int width, int height) {
+        setImageUrl(url, width, height, 0, null);
     }
 
-    public void setImageFile(String url, int width, int height, int defaultResId, ControllerListener<ImageInfo> listener) {
+    public void setImageUrl(String url, int width, int height, int defaultResId, ControllerListener<ImageInfo> listener) {
         ImageRequest request = ImageRequestBuilder
-                .newBuilderWithSource(Uri.fromFile(new File(url)))
+                .newBuilderWithSource(formatUri(url))
                 .setLocalThumbnailPreviewsEnabled(true)
                 .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
                 .setProgressiveRenderingEnabled(false)
@@ -150,7 +150,7 @@ public class ImageDraweeView extends SimpleDraweeView {
                 .setControllerListener(listener)
                 .build();
         if (defaultResId > 0) {
-            getHierarchy().setPlaceholderImage(defaultResId);
+            setPlaceholderImage(defaultResId);
         }
         this.setController(controller);
     }
