@@ -35,8 +35,8 @@ import java.util.List;
 
 public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.OnPhotoResultCallback<PhotoEntity> {
     private static final int TOTAL_COUNT = 9;
-    private TextView tv_done_notice;
-    private RecyclerView rv_photos;
+    private TextView tvDoneNotice;
+    private RecyclerView rvPhotos;
 
     private PhotoPickerHelper mPickerHelper;
     private List<PhotoDirectoryEntity<PhotoEntity>> mPhotoDirectoryList;
@@ -65,15 +65,15 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
 
     private void initViews(Bundle savedInstanceState) {
         setContentView(R.layout.activity_photo_picker);
-        ImageView iv_back = findViewById(R.id.iv_back);
-        tv_done_notice = findViewById(R.id.tv_done_notice);
-        rv_photos = findViewById(R.id.rv_photos);
+        ImageView ivBack = findViewById(R.id.iv_back);
+        tvDoneNotice = findViewById(R.id.tv_done_notice);
+        rvPhotos = findViewById(R.id.rv_photos);
 
         updateTitle(mCurrentCount);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
-        rv_photos.setLayoutManager(layoutManager);
-        rv_photos.addItemDecoration(new SpacesItemDecoration((int) getResources().getDimension(R.dimen.photo_width)));
+        rvPhotos.setLayoutManager(layoutManager);
+        rvPhotos.addItemDecoration(new SpacesItemDecoration((int) getResources().getDimension(R.dimen.photo_width)));
 
         mPickerHelper = PhotoPickerFactory.createPhotoPickerHelper(this);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -82,12 +82,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
             mPickerHelper.scanPhotoList(this);
         }
 
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        ivBack.setOnClickListener(v -> finish());
         if (mPickerHelper != null && savedInstanceState != null) {
             mPickerHelper.setPhotoPath(savedInstanceState.getString("image", null));
         }
@@ -180,7 +175,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
     }
 
     private void updateTitle(int currentCount) {
-        tv_done_notice.setText(getString(R.string.template_done, currentCount, TOTAL_COUNT));
+        tvDoneNotice.setText(getString(R.string.template_done, currentCount, TOTAL_COUNT));
     }
 
     private void finishSelect() {
@@ -213,7 +208,7 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
                 }
             };
             mPickerAdapter.setCallback(mCallback);
-            rv_photos.setAdapter(mPickerAdapter);
+            rvPhotos.setAdapter(mPickerAdapter);
         } else {
             mPickerAdapter.getAdapterManager().replaceAllItems(photos);
         }

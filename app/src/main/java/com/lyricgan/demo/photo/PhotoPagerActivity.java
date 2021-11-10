@@ -17,8 +17,8 @@ import com.lyricgan.media.photo.view.ImageScaleType;
 import java.util.ArrayList;
 
 public class PhotoPagerActivity extends Activity {
-    private ViewPager vp_photos;
-    private ImageView iv_selected;
+    private ViewPager vpPhotos;
+    private ImageView ivSelected;
 
     private ArrayList<PhotoEntity> mPhotoList;
     private ArrayList<PhotoEntity> mSelectPhotoList;
@@ -28,23 +28,13 @@ public class PhotoPagerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_picker_pager);
-        ImageView iv_back = findViewById(R.id.iv_back);
-        vp_photos = findViewById(R.id.vp_photos);
-        iv_selected = findViewById(R.id.iv_selected);
+        ImageView ivBack = findViewById(R.id.iv_back);
+        vpPhotos = findViewById(R.id.vp_photos);
+        ivSelected = findViewById(R.id.iv_selected);
 
         initialize();
-        iv_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        iv_selected.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        ivBack.setOnClickListener(v -> finish());
+        ivSelected.setVisibility(View.GONE);
     }
 
     private void initialize() {
@@ -52,7 +42,7 @@ public class PhotoPagerActivity extends Activity {
         mSelectPhotoList = getIntent().getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOS_SELECTED);
         mSelectIndex = getIntent().getIntExtra(PhotoPickerHelper.KEY_SELECT_INDEX, 0);
 
-        vp_photos.setAdapter(new PhotoPagerAdapter<PhotoEntity>(mPhotoList) {
+        vpPhotos.setAdapter(new PhotoPagerAdapter<PhotoEntity>(mPhotoList) {
             @Override
             protected View onInstantiateItem(ViewGroup container, int position, PhotoEntity item) {
                 PhotoDraweeView draweeView = new PhotoDraweeView(container.getContext());
@@ -61,7 +51,7 @@ public class PhotoPagerActivity extends Activity {
                 return draweeView;
             }
         });
-        vp_photos.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        vpPhotos.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 onPageSelected(position);
@@ -77,14 +67,14 @@ public class PhotoPagerActivity extends Activity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-        vp_photos.setCurrentItem(mSelectIndex);
+        vpPhotos.setCurrentItem(mSelectIndex);
     }
 
     private void update(int position) {
         if (mSelectPhotoList != null && mSelectPhotoList.contains(mPhotoList.get(position))) {
-            iv_selected.setImageResource(R.mipmap.pic_check_select);
+            ivSelected.setImageResource(R.mipmap.pic_check_select);
         } else {
-            iv_selected.setImageResource(R.mipmap.pic_check_normal);
+            ivSelected.setImageResource(R.mipmap.pic_check_normal);
         }
     }
 }
