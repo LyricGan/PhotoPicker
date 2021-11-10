@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:fresco="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:padding="30dp">
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="30dp">
 
-    <com.photopicker.library.view.ImageDraweeView
+    <com.lyricgan.media.photo.view.ImageDraweeView
         android:id="@id/photo_picker_iv_image"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,15 +17,15 @@
         fresco:failureImage="@mipmap/ic_camera_album"
         fresco:failureImageScaleType="centerCrop"
         fresco:placeholderImage="@mipmap/ic_camera_album"
-        fresco:placeholderImageScaleType="centerCrop"/>
+        fresco:placeholderImageScaleType="centerCrop" />
 
     <ImageView
         android:id="@id/photo_picker_iv_select_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
+        android:layout_gravity="top|end"
         android:layout_margin="5dp"
         android:contentDescription="@null"
         android:padding="5dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 </FrameLayout>

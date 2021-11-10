@@ -1,15 +1,12 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.lyricgan.demo.photo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
     }
     buildTypes {
         release {
@@ -17,14 +14,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility 1.8
-        targetCompatibility 1.8
-    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(':library_photo')
-    implementation rootProject.ext.dependencies.permissions
+    implementation rootProject.ext.dependencies.jUnit
+    api rootProject.ext.dependencies.appCompat
+    api rootProject.ext.dependencies.recyclerView
+    api rootProject.ext.dependencies.fragment
+    api rootProject.ext.dependencies.fresco
 }
