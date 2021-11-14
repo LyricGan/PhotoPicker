@@ -1,6 +1,7 @@
 package com.lyricgan.demo.photo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import com.lyricgan.media.photo.view.ImageScaleType;
 import java.util.ArrayList;
 
 public class PhotoPagerActivity extends Activity {
-    private ViewPager vpPhotos;
     private ImageView ivSelected;
 
     private ArrayList<PhotoEntity> mPhotoList;
@@ -28,19 +28,13 @@ public class PhotoPagerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_picker_pager);
-        ImageView ivBack = findViewById(R.id.iv_back);
-        vpPhotos = findViewById(R.id.vp_photos);
+        ViewPager vpPhotos = findViewById(R.id.vp_photos);
         ivSelected = findViewById(R.id.iv_selected);
 
-        initialize();
-        ivBack.setOnClickListener(v -> finish());
-        ivSelected.setVisibility(View.GONE);
-    }
-
-    private void initialize() {
-        mPhotoList = getIntent().getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOS);
-        mSelectPhotoList = getIntent().getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOS_SELECTED);
-        mSelectIndex = getIntent().getIntExtra(PhotoPickerHelper.KEY_SELECT_INDEX, 0);
+        Intent intent = getIntent();
+        mPhotoList = intent.getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOS);
+        mSelectPhotoList = intent.getParcelableArrayListExtra(PhotoPickerHelper.KEY_PHOTOS_SELECTED);
+        mSelectIndex = intent.getIntExtra(PhotoPickerHelper.KEY_SELECT_INDEX, 0);
 
         vpPhotos.setAdapter(new PhotoPagerAdapter<PhotoEntity>(mPhotoList) {
             @Override
@@ -54,13 +48,12 @@ public class PhotoPagerActivity extends Activity {
         vpPhotos.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                onPageSelected(position);
             }
 
             @Override
             public void onPageSelected(int position) {
                 mSelectIndex = position;
-                update(mSelectIndex);
+                update(position);
             }
 
             @Override
@@ -68,10 +61,16 @@ public class PhotoPagerActivity extends Activity {
             }
         });
         vpPhotos.setCurrentItem(mSelectIndex);
+
+        findViewById(R.id.iv_back).setOnClickListener(v -> finish());
+        ivSelected.setVisibility(View.GONE);
     }
 
     private void update(int position) {
-        if (mSelectPhotoList != null && mSelectPhotoList.contains(mPhotoList.get(position))) {
+        if (mSelectPhotoList == null || mPhotoList == null) {
+            return;
+        }
+        if (mSelectPhotoList.contains(mPhotoList.get(position))) {
             ivSelected.setImageResource(R.mipmap.pic_check_select);
         } else {
             ivSelected.setImageResource(R.mipmap.pic_check_normal);
