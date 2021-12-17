@@ -46,21 +46,21 @@ public class PhotoPickerActivity extends Activity implements PhotoPickerHelper.O
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (XXPermissions.isGranted(this, Permission.WRITE_EXTERNAL_STORAGE)) {
-            initViews(savedInstanceState);
-        } else {
-            XXPermissions.with(this).permission(Permission.WRITE_EXTERNAL_STORAGE).request(new OnPermissionCallback() {
-                @Override
-                public void onGranted(List<String> permissions, boolean all) {
+        XXPermissions.with(this).permission(Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE).request(new OnPermissionCallback() {
+            @Override
+            public void onGranted(List<String> permissions, boolean all) {
+                if (all) {
                     initViews(savedInstanceState);
-                }
-
-                @Override
-                public void onDenied(List<String> permissions, boolean never) {
+                } else {
                     finish();
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onDenied(List<String> permissions, boolean never) {
+                finish();
+            }
+        });
     }
 
     private void initViews(Bundle savedInstanceState) {
