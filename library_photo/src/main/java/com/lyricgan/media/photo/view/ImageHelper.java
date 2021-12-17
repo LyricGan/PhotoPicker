@@ -5,9 +5,7 @@ import android.content.Context;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
 /**
- * @author lyricgan
- * @description image helper with fresco
- * @time 2016/7/6 18:17
+ * @author Lyric Gan
  */
 public class ImageHelper {
     private static ImageHelper mInstance;

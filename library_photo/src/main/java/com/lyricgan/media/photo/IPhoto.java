@@ -1,9 +1,7 @@
 package com.lyricgan.media.photo;
 
 /**
- * @author lyricgan
- * @description
- * @time 2016/7/1 14:31
+ * @author Lyric Gan
  */
 public interface IPhoto extends Selectable {
 

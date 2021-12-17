@@ -10,9 +10,7 @@ import com.facebook.imagepipeline.cache.MemoryCacheParams;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 
 /**
- * @author lyricgan
- * @description image factory
- * @time 2016/7/6 18:20
+ * @author Lyric Gan
  */
 class ImageFactory {
     private static final int MAX_HEAP_SIZE = (int) Runtime.getRuntime().maxMemory();

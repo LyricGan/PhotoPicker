@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author lyricgan
- * @description
- * @time 2016/7/1 14:33
+ * @author Lyric Gan
  */
 public class PhotoDirectoryEntity<T extends IPhoto> implements Selectable {
     private String id;

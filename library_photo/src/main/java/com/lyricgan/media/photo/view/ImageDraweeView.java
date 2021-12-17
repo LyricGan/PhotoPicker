@@ -22,9 +22,7 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import java.io.File;
 
 /**
- * @author lyricgan
- * @description use {@link ImageHelper#initialize(Context)} first
- * @time 2016/7/6 19:18
+ * @author Lyric Gan
  */
 public class ImageDraweeView extends SimpleDraweeView {
 

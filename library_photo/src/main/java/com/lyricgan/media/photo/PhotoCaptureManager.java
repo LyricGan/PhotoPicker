@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * @author lyricgan
- * @description
- * @time 2016/7/1 14:53
+ * @author Lyric Gan
  */
 public class PhotoCaptureManager {
     private static final String _JPG = ".jpg";

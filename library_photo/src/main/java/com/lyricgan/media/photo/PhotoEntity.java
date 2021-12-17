@@ -4,9 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * @author lyricgan
- * @description
- * @time 2016/7/1 14:32
+ * @author Lyric Gan
  */
 public class PhotoEntity implements IPhoto, Parcelable {
     private int imageId;
