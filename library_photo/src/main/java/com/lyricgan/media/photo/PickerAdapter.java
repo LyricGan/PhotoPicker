@@ -18,22 +18,22 @@ public abstract class PickerAdapter<T extends Selectable> extends RecyclerView.A
     private final AdapterManager<T> mAdapterManager;
 
     /**
-     * create QuickRecycleViewAdapter with the layout id. if layoutId==0, the method
+     * create adapter with the layout id. if layoutId==0, the method
      * {@link #getItemLayoutId(int, Selectable)} will be called.
      *
      * @param layoutId the layout id you want to inflate, or 0 if you want multi item.
-     * @param items
+     * @param items list items
      */
     public PickerAdapter(int layoutId, List<T> items) {
         this(layoutId, items, SelectMode.SINGLE);
     }
 
     /**
-     * create QuickRecycleViewAdapter with the layout id. if layoutId==0, the method
+     * create adapter with the layout id. if layoutId==0, the method
      * {@link #getItemLayoutId(int, Selectable)} will be called.
      *
-     * @param layoutId   the layout id you want to inflate, or 0 if you want multi item.
-     * @param items
+     * @param layoutId the layout id you want to inflate, or 0 if you want multi item.
+     * @param items list items
      * @param selectMode select mode
      */
     public PickerAdapter(int layoutId, List<T> items, SelectMode selectMode) {
@@ -67,7 +67,7 @@ public abstract class PickerAdapter<T extends Selectable> extends RecyclerView.A
     }
 
     /**
-     * this is callled after data {@link #notifyDataSetChanged()}
+     * this is called after data {@link #notifyDataSetChanged()}
      */
     @Override
     public void afterNotifyDataChanged() {
