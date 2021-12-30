@@ -15,7 +15,7 @@ import com.lyricgan.media.photo.view.ImageScaleType;
 
 import java.util.List;
 
-public abstract class PhotoPickerAdapter<T extends IPhoto> extends QuickRecycleViewAdapter<T> {
+public abstract class PhotoPickerAdapter<T extends IPhoto> extends PickerAdapter<T> {
     private static final int VIEW_TYPE_CAMERA = -1;
     private boolean mShowCamera = true;
     private ICallback<T> mCallback;

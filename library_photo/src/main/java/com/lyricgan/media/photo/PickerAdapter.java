@@ -11,21 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public abstract class QuickRecycleViewAdapter<T extends Selectable> extends RecyclerView.Adapter<RecyclerView.ViewHolder>
+public abstract class PickerAdapter<T extends Selectable> extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         implements AdapterManager.IAdapterManagerCallback, AdapterManager.IHeaderFooterManager, AdapterManager.IAdapterManagerCallback2 {
-    private int mLayoutId = 0;
+    private final int mLayoutId;
     private HeaderFooterHelper mHeaderFooterHelper;
-    private AdapterManager<T> mAdapterManager;
+    private final AdapterManager<T> mAdapterManager;
 
     /**
      * create QuickRecycleViewAdapter with the layout id. if layoutId==0, the method
      * {@link #getItemLayoutId(int, Selectable)} will be called.
      *
      * @param layoutId the layout id you want to inflate, or 0 if you want multi item.
-     * @param mDatas
+     * @param items
      */
-    public QuickRecycleViewAdapter(int layoutId, List<T> mDatas) {
-        this(layoutId, mDatas, SelectMode.SINGLE);
+    public PickerAdapter(int layoutId, List<T> items) {
+        this(layoutId, items, SelectMode.SINGLE);
     }
 
     /**
@@ -33,25 +33,25 @@ public abstract class QuickRecycleViewAdapter<T extends Selectable> extends Recy
      * {@link #getItemLayoutId(int, Selectable)} will be called.
      *
      * @param layoutId   the layout id you want to inflate, or 0 if you want multi item.
-     * @param mDatas
+     * @param items
      * @param selectMode select mode
      */
-    public QuickRecycleViewAdapter(int layoutId, List<T> mDatas, SelectMode selectMode) {
-        this(layoutId, mDatas, selectMode, true);
+    public PickerAdapter(int layoutId, List<T> items, SelectMode selectMode) {
+        this(layoutId, items, selectMode, true);
     }
 
     /**
      * internal
      */
-    QuickRecycleViewAdapter(int layoutId, List<T> mDatas, SelectMode selectMode, boolean callFinalInit) {
+    PickerAdapter(int layoutId, List<T> items, SelectMode selectMode, boolean callFinalInit) {
         if (layoutId < 0) {
             throw new IllegalArgumentException("layoutId can't be negative ");
         }
         this.mLayoutId = layoutId;
-        mAdapterManager = new AdapterManager<T>(mDatas, selectMode, this) {
+        mAdapterManager = new AdapterManager<T>(items, selectMode, this) {
             @Override
             public IHeaderFooterManager getHeaderFooterManager() {
-                return QuickRecycleViewAdapter.this;
+                return PickerAdapter.this;
             }
         };
         if (callFinalInit) {
